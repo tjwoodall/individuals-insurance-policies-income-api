@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsinsurancepoliciesincomeapi.config
+package definition
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+import definition.APIStatus.{ALPHA, BETA, DEPRECATED, RETIRED, STABLE}
+import support.UnitSpec
+import utils.enums.EnumJsonSpecSupport
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
+class APIStatusSpec extends UnitSpec with EnumJsonSpecSupport {
 
-  val appName: String = config.get[String]("appName")
+  testRoundTrip[APIStatus](
+    ("ALPHA", ALPHA),
+    ("BETA", BETA),
+    ("STABLE", STABLE),
+    ("DEPRECATED", DEPRECATED),
+    ("RETIRED", RETIRED)
+  )
+
 }

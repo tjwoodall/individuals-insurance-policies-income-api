@@ -27,7 +27,7 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     retrieveManaged                 := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(warnScalaVersionEviction = false),
     scalaVersion                    := "2.13.8",
