@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsinsurancepoliciesincomeapi.controllers
+package support
 
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.EitherValues
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 
-@Singleton()
-class MicroserviceHelloWorldController @Inject()(cc: ControllerComponents)
-    extends BackendController(cc) {
-
-  def hello(): Action[AnyContent] = Action.async { _ =>
-    Future.successful(Ok("""{"value": "Hello world"}"""))
-  }
-}
+trait UnitSpec extends AnyWordSpecLike with MockFactory with EitherValues with Matchers with FutureAwaits with DefaultAwaitTimeout

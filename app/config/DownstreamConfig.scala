@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsinsurancepoliciesincomeapi.controllers
+package config
 
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
-
-@Singleton()
-class MicroserviceHelloWorldController @Inject()(cc: ControllerComponents)
-    extends BackendController(cc) {
-
-  def hello(): Action[AnyContent] = Action.async { _ =>
-    Future.successful(Ok("""{"value": "Hello world"}"""))
-  }
-}
+case class DownstreamConfig(
+                             baseUrl: String,
+                             env: String,
+                             token: String,
+                             environmentHeaders: Option[Seq[String]]
+                           )

@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsinsurancepoliciesincomeapi.controllers
+package definition
 
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import definition.APIStatus.{ALPHA, BETA, DEPRECATED, RETIRED, STABLE}
+import support.UnitSpec
+import utils.enums.EnumJsonSpecSupport
 
-@Singleton()
-class MicroserviceHelloWorldController @Inject()(cc: ControllerComponents)
-    extends BackendController(cc) {
+class APIStatusSpec extends UnitSpec with EnumJsonSpecSupport {
 
-  def hello(): Action[AnyContent] = Action.async { _ =>
-    Future.successful(Ok("""{"value": "Hello world"}"""))
-  }
+  testRoundTrip[APIStatus](
+    ("ALPHA", ALPHA),
+    ("BETA", BETA),
+    ("STABLE", STABLE),
+    ("DEPRECATED", DEPRECATED),
+    ("RETIRED", RETIRED)
+  )
+
 }
