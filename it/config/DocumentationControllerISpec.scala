@@ -51,7 +51,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
        |   "api":{
        |      "name":"Individuals Insurance Policies Income (MTD)",
        |      "description":"An API for providing insurance policy income data",
-       |      "context":"individuals/income/insurance-policies",
+       |      "context":"individuals/insurance-policies-income",
        |      "categories":[
        |         "INCOME_TAX_MTD"
        |      ],
