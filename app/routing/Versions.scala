@@ -49,6 +49,7 @@ object Version {
 
 sealed trait Version {
   val name: String
+  val maybePrevious: Option[Version] = None
   override def toString: String = name
 }
 

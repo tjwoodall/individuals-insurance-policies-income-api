@@ -16,6 +16,8 @@
 
 package support
 
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -24,22 +26,27 @@ import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.{Application, Environment, Mode}
 
 trait IntegrationBaseSpec extends UnitSpec with WireMockHelper with GuiceOneServerPerSuite with BeforeAndAfterEach with BeforeAndAfterAll {
-  lazy val client: WSClient = app.injector.instanceOf[WSClient]
+
   val mockHost: String = WireMockHelper.host
   val mockPort: String = WireMockHelper.wireMockPort.toString
 
+  lazy val client: WSClient = app.injector.instanceOf[WSClient]
+
   def servicesConfig: Map[String, Any] = Map(
-    "microservice.services.des.host" -> mockHost,
-    "microservice.services.des.port" -> mockPort,
-    "microservice.services.ifs.host" -> mockHost,
-    "microservice.services.ifs.port" -> mockPort,
-    "microservice.services.tys-ifs.host" -> mockHost,
-    "microservice.services.tys-ifs.port" -> mockPort,
-    "microservice.services.mtd-id-lookup.host" -> mockHost,
-    "microservice.services.mtd-id-lookup.port" -> mockPort,
-    "microservice.services.auth.host" -> mockHost,
-    "microservice.services.auth.port" -> mockPort,
-    "auditing.consumer.baseUri.port" -> mockPort
+    "microservice.services.ifs.host"               -> mockHost,
+    "microservice.services.ifs.port"               -> mockPort,
+    "microservice.services.tys-ifs.host"           -> mockHost,
+    "microservice.services.tys-ifs.port"           -> mockPort,
+    "microservice.services.api1661.host"           -> mockHost,
+    "microservice.services.api1661.port"           -> mockPort,
+    "microservice.services.mtd-id-lookup.host"     -> mockHost,
+    "microservice.services.mtd-id-lookup.port"     -> mockPort,
+    "microservice.services.auth.host"              -> mockHost,
+    "microservice.services.auth.port"              -> mockPort,
+    "auditing.consumer.baseUri.port"               -> mockPort,
+    "minimumPermittedTaxYear"                      -> 2020,
+    "feature-switch.opw.enabled"                   -> "true",
+    "feature-switch.postCessationReceipts.enabled" -> "true"
   )
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
@@ -65,4 +72,22 @@ trait IntegrationBaseSpec extends UnitSpec with WireMockHelper with GuiceOneServ
   def buildRequest(path: String): WSRequest = client.url(s"http://localhost:$port$path").withFollowRedirects(false)
 
   def document(response: WSResponse): JsValue = Json.parse(response.body)
+
+  def getCurrentTaxYear: String = {
+    val currentDate = DateTime.now(DateTimeZone.UTC)
+
+    val taxYearStartDate: DateTime = DateTime.parse(
+      s"${currentDate.getYear}-04-06",
+      DateTimeFormat.forPattern("yyyy-MM-dd")
+    )
+
+    def fromDesIntToString(taxYear: Int): String = s"${taxYear - 1}-${taxYear.toString.drop(2)}"
+
+    if (currentDate.isBefore(taxYearStartDate)) {
+      fromDesIntToString(currentDate.getYear)
+    } else {
+      fromDesIntToString(currentDate.getYear + 1)
+    }
+  }
+
 }

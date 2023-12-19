@@ -29,6 +29,12 @@ trait AppConfig {
   lazy val ifsDownstreamConfig: DownstreamConfig =
     DownstreamConfig(baseUrl = ifsBaseUrl, env = ifsEnv, token = ifsToken, environmentHeaders = ifsEnvironmentHeaders)
 
+  lazy val taxYearSpecificIfsDownstreamConfig: DownstreamConfig =
+    DownstreamConfig(baseUrl = tysIfsBaseUrl, env = tysIfsEnv, token = tysIfsToken, environmentHeaders = tysIfsEnvironmentHeaders)
+
+  lazy val api1661DownstreamConfig: DownstreamConfig =
+    DownstreamConfig(baseUrl = api1661BaseUrl, env = api1661Env, token = api1661Token, environmentHeaders = api1661EnvironmentHeaders)
+
   // IFS Config
   def ifsBaseUrl: String
 
@@ -37,6 +43,24 @@ trait AppConfig {
   def ifsToken: String
 
   def ifsEnvironmentHeaders: Option[Seq[String]]
+
+  // Tax Year Specific (TYS) IFS Config
+  def tysIfsBaseUrl: String
+
+  def tysIfsEnv: String
+
+  def tysIfsToken: String
+
+  def tysIfsEnvironmentHeaders: Option[Seq[String]]
+
+  // Api1661 Config
+  def api1661BaseUrl: String
+
+  def api1661Env: String
+
+  def api1661Token: String
+
+  def api1661EnvironmentHeaders: Option[Seq[String]]
 
   // MTD IF Lookup Config
   def mtdIdBaseUrl: String
@@ -50,6 +74,7 @@ trait AppConfig {
   def featureSwitches: Configuration
 
   def confidenceLevelConfig: ConfidenceLevelConfig
+  def minimumPermittedTaxYear: Int
 }
 
 @Singleton
@@ -58,13 +83,25 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   val mtdIdBaseUrl: String = config.baseUrl("mtd-id-lookup")
 
   // IFS Config
-  val ifsBaseUrl: String                         = config.baseUrl("ifs")
-  val ifsEnv: String                             = config.getString("microservice.services.ifs.env")
-  val ifsToken: String                           = config.getString("microservice.services.ifs.token")
+  val ifsBaseUrl: String = config.baseUrl("ifs")
+  val ifsEnv: String = config.getString("microservice.services.ifs.env")
+  val ifsToken: String = config.getString("microservice.services.ifs.token")
   val ifsEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.ifs.environmentHeaders")
 
+  // Tax Year Specific (TYS) IFS Config
+  val tysIfsBaseUrl: String = config.baseUrl("tys-ifs")
+  val tysIfsEnv: String = config.getString("microservice.services.tys-ifs.env")
+  val tysIfsToken: String = config.getString("microservice.services.tys-ifs.token")
+  val tysIfsEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.tys-ifs.environmentHeaders")
+
+  // API1661 Config
+  val api1661BaseUrl: String = config.baseUrl("api1661")
+  val api1661Env: String = config.getString("microservice.services.api1661.env")
+  val api1661Token: String = config.getString("microservice.services.api1661.token")
+  val api1661EnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.api1661.environmentHeaders")
+
   // MTD IF Lookup Config
-  val apiGatewayContext: String                    = config.getString("api.gateway.context")
+  val apiGatewayContext: String = config.getString("api.gateway.context")
   val confidenceLevelConfig: ConfidenceLevelConfig = configuration.get[ConfidenceLevelConfig](s"api.confidence-level-check")
 
   def apiStatus(version: Version): String = config.getString(s"api.$version.status")
@@ -72,6 +109,8 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   def featureSwitches: Configuration = configuration.getOptional[Configuration](s"feature-switch").getOrElse(Configuration.empty)
 
   def endpointsEnabled(version: Version): Boolean = config.getBoolean(s"api.$version.endpoints.enabled")
+
+  val minimumPermittedTaxYear: Int = config.getInt("minimumPermittedTaxYear")
 }
 
 case class ConfidenceLevelConfig(confidenceLevel: ConfidenceLevel, definitionEnabled: Boolean, authValidationEnabled: Boolean)
