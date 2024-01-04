@@ -22,7 +22,6 @@ object AppDependencies {
     "org.scalamock"          %% "scalamock"              % "5.2.0"              % "test, it",
     "org.playframework"      %% "play-test"              % PlayVersion.current  % scope,
     "uk.gov.hmrc"            %% "bootstrap-test-play-30" % bootstrapPlayVersion % "test, it",
-    "org.scalatestplus.play" %% "scalatestplus-play"     % "5.1.0"              % scope,
     "org.wiremock"            % "wiremock"               % "3.0.4"              % scope,
     "io.swagger.parser.v3"    % "swagger-parser-v3"      % "2.1.12"             % "test, it"
   )
