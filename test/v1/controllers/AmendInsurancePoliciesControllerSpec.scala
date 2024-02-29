@@ -17,21 +17,16 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.hateoas.MockHateoasFactory
 import api.mocks.services.MockAuditService
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
-import api.models.hateoas
-import api.models.hateoas.Method.{DELETE, GET, PUT}
-import api.models.hateoas.{HateoasWrapper, Link}
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContentAsJson, Result}
 import v1.mocks.requestParsers.MockAmendInsurancePoliciesRequestParser
 import v1.mocks.services.MockAmendInsurancePoliciesService
 import v1.models.request.amendInsurancePolicies._
-import v1.models.response.amendInsurancePolicies.AmendInsurancePoliciesHateoasData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,8 +36,7 @@ class AmendInsurancePoliciesControllerSpec
     with ControllerTestRunner
     with MockAmendInsurancePoliciesService
     with MockAuditService
-    with MockAmendInsurancePoliciesRequestParser
-    with MockHateoasFactory {
+    with MockAmendInsurancePoliciesRequestParser {
 
   val taxYear = "2019-20"
 
@@ -262,35 +256,7 @@ class AmendInsurancePoliciesControllerSpec
     body = amendInsurancePoliciesRequestBody
   )
 
-  override val testHateoasLinks: Seq[Link] = Seq(
-    hateoas.Link(href = s"/baseUrl/insurance-policies/$nino/$taxYear", method = PUT, rel = "create-and-amend-insurance-policies-income"),
-    hateoas.Link(href = s"/baseUrl/insurance-policies/$nino/$taxYear", method = GET, rel = "self"),
-    hateoas.Link(href = s"/baseUrl/insurance-policies/$nino/$taxYear", method = DELETE, rel = "delete-insurance-policies-income")
-  )
 
-  val hateoasResponse: JsValue = Json.parse(
-    s"""
-       |{
-       |   "links":[
-       |      {
-       |         "href":"/baseUrl/insurance-policies/$nino/$taxYear",
-       |         "rel":"create-and-amend-insurance-policies-income",
-       |         "method":"PUT"
-       |      },
-       |      {
-       |         "href":"/baseUrl/insurance-policies/$nino/$taxYear",
-       |         "rel":"self",
-       |         "method":"GET"
-       |      },
-       |      {
-       |         "href":"/baseUrl/insurance-policies/$nino/$taxYear",
-       |         "rel":"delete-insurance-policies-income",
-       |         "method":"DELETE"
-       |      }
-       |   ]
-       |}
-       |""".stripMargin
-  )
 
   "AmendInsurancePoliciesController" should {
     "return a successful response with status 200 (OK)" when {
@@ -303,15 +269,12 @@ class AmendInsurancePoliciesControllerSpec
           .amendInsurancePolicies(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        MockHateoasFactory
-          .wrap((), AmendInsurancePoliciesHateoasData(nino, taxYear))
-          .returns(HateoasWrapper((), testHateoasLinks))
 
         runOkTestWithAudit(
           expectedStatus = OK,
           maybeAuditRequestBody = Some(requestBodyJson),
-          maybeExpectedResponseBody = Some(hateoasResponse),
-          maybeAuditResponseBody = Some(hateoasResponse)
+          maybeExpectedResponseBody = None,
+          maybeAuditResponseBody = None
         )
       }
     }
@@ -347,7 +310,6 @@ class AmendInsurancePoliciesControllerSpec
       parser = mockAmendInsurancePoliciesRequestParser,
       service = mockAmendInsurancePoliciesService,
       auditService = mockAuditService,
-      hateoasFactory = mockHateoasFactory,
       cc = cc,
       idGenerator = mockIdGenerator
     )

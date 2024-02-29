@@ -16,10 +16,7 @@
 
 package v1.models.response.retrieveInsurancePolicies
 
-import api.hateoas.{HateoasLinks, HateoasLinksFactory}
 import api.models.domain.Timestamp
-import api.models.hateoas.{HateoasData, Link}
-import config.AppConfig
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 import utils.JsonUtils
@@ -31,7 +28,7 @@ case class RetrieveInsurancePoliciesResponse(submittedOn: Timestamp,
                                              voidedIsa: Option[Seq[VoidedIsaPoliciesItem]],
                                              foreign: Option[Seq[ForeignPoliciesItem]])
 
-object RetrieveInsurancePoliciesResponse extends HateoasLinks with JsonUtils {
+object RetrieveInsurancePoliciesResponse extends JsonUtils {
 
   implicit val reads: Reads[RetrieveInsurancePoliciesResponse] = (
     (JsPath \ "submittedOn").read[Timestamp] and
@@ -44,20 +41,4 @@ object RetrieveInsurancePoliciesResponse extends HateoasLinks with JsonUtils {
 
   implicit val writes: OWrites[RetrieveInsurancePoliciesResponse] = Json.writes[RetrieveInsurancePoliciesResponse]
 
-  implicit object RetrieveInsurancePoliciesLinksFactory
-      extends HateoasLinksFactory[RetrieveInsurancePoliciesResponse, RetrieveInsurancePoliciesHateoasData] {
-
-    override def links(appConfig: AppConfig, data: RetrieveInsurancePoliciesHateoasData): Seq[Link] = {
-      import data._
-      Seq(
-        amendInsurancePolicies(appConfig, nino, taxYear),
-        retrieveInsurancePolicies(appConfig, nino, taxYear),
-        deleteInsurancePolicies(appConfig, nino, taxYear)
-      )
-    }
-
-  }
-
 }
-
-case class RetrieveInsurancePoliciesHateoasData(nino: String, taxYear: String) extends HateoasData

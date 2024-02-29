@@ -26,6 +26,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 import v1.fixtures.RetrieveInsurancePoliciesControllerFixture
+import v1.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
 
 class RetrieveInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
 
@@ -42,7 +43,7 @@ class RetrieveInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request.get())
         response.status shouldBe OK
-        response.json shouldBe mtdResponse
+        response.json shouldBe fullRetrieveInsurancePoliciesResponse
         response.header("Content-Type") shouldBe Some("application/json")
       }
 
@@ -57,7 +58,7 @@ class RetrieveInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request.get())
         response.status shouldBe OK
-        response.json shouldBe mtdResponse
+        response.json shouldBe fullRetrieveInsurancePoliciesResponse
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }
@@ -145,7 +146,6 @@ class RetrieveInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
     def downstreamUri: String
 
     val downstreamResponse: JsValue = RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
-    val mtdResponse: JsValue        = RetrieveInsurancePoliciesControllerFixture.mtdResponseWithHateoas(nino, taxYear)
 
     def uri: String = s"/$nino/$taxYear"
 

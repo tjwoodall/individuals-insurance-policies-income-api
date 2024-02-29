@@ -17,15 +17,11 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.hateoas.MockHateoasFactory
 import api.models.domain.{Nino, TaxYear, Timestamp}
 import api.models.errors._
-import api.models.hateoas
-import api.models.hateoas.Method.{DELETE, GET, PUT}
-import api.models.hateoas.{HateoasWrapper, Link}
 import api.models.outcomes.ResponseWrapper
 import play.api.mvc.Result
-import v1.fixtures.RetrieveInsurancePoliciesControllerFixture
+import v1.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
 import v1.mocks.requestParsers.MockRetrieveInsurancePoliciesRequestParser
 import v1.mocks.services.MockRetrieveInsurancePoliciesService
 import v1.models.request.retrieveInsurancePolicies.{RetrieveInsurancePoliciesRawData, RetrieveInsurancePoliciesRequest}
@@ -38,7 +34,6 @@ class RetrieveInsurancePoliciesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockRetrieveInsurancePoliciesService
-    with MockHateoasFactory
     with MockRetrieveInsurancePoliciesRequestParser {
 
   val taxYear: String = "2019-20"
@@ -51,15 +46,6 @@ class RetrieveInsurancePoliciesControllerSpec
   private val requestData: RetrieveInsurancePoliciesRequest = RetrieveInsurancePoliciesRequest(
     nino = Nino(nino),
     taxYear = TaxYear.fromMtd(taxYear)
-  )
-
-  override val testHateoasLinks: Seq[Link] = Seq(
-    hateoas.Link(
-      href = s"/individuals/insurance-policies-income/$nino/$taxYear",
-      method = PUT,
-      rel = "create-and-amend-insurance-policies-income"),
-    hateoas.Link(href = s"/individuals/insurance-policies-income/$nino/$taxYear", method = GET, rel = "self"),
-    hateoas.Link(href = s"/individuals/insurance-policies-income/$nino/$taxYear", method = DELETE, rel = "delete-insurance-policies-income")
   )
 
   private val lifeInsuranceItemModel = CommonInsurancePoliciesItem(
@@ -117,7 +103,7 @@ class RetrieveInsurancePoliciesControllerSpec
     foreign = Some(Seq(foreignItemModel))
   )
 
-  private val mtdResponse = RetrieveInsurancePoliciesControllerFixture.mtdResponseWithHateoas(nino, taxYear)
+  private val mtdResponse = fullRetrieveInsurancePoliciesResponse
 
   "RetrieveInsurancePoliciesController" should {
     "return OK" when {
@@ -129,10 +115,6 @@ class RetrieveInsurancePoliciesControllerSpec
         MockRetrieveInsurancePoliciesService
           .retrieve(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, retrieveInsurancePoliciesResponseModel))))
-
-        MockHateoasFactory
-          .wrap(retrieveInsurancePoliciesResponseModel, RetrieveInsurancePoliciesHateoasData(nino, taxYear))
-          .returns(HateoasWrapper(retrieveInsurancePoliciesResponseModel, testHateoasLinks))
 
         runOkTest(expectedStatus = OK, maybeExpectedResponseBody = Some(mtdResponse))
       }
@@ -168,7 +150,6 @@ class RetrieveInsurancePoliciesControllerSpec
       lookupService = mockMtdIdLookupService,
       parser = mockRetrieveInsurancePoliciesRequestParser,
       service = mockRetrieveInsurancePoliciesService,
-      hateoasFactory = mockHateoasFactory,
       cc = cc,
       idGenerator = mockIdGenerator
     )

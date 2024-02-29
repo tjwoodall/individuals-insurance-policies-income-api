@@ -17,15 +17,12 @@
 package v1.controllers
 
 import api.controllers._
-import api.hateoas.HateoasFactory
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContentAsJson, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.requestParsers.AmendInsurancePoliciesRequestParser
 import v1.models.request.amendInsurancePolicies.AmendInsurancePoliciesRawData
-import v1.models.response.amendInsurancePolicies.AmendInsurancePoliciesHateoasData
-import v1.models.response.amendInsurancePolicies.AmendInsurancePoliciesResponse.AmendInsurancePoliciesLinksFactory
 import v1.services.AmendInsurancePoliciesService
 
 import javax.inject.{Inject, Singleton}
@@ -37,7 +34,6 @@ class AmendInsurancePoliciesController @Inject() (val authService: EnrolmentsAut
                                                   parser: AmendInsurancePoliciesRequestParser,
                                                   service: AmendInsurancePoliciesService,
                                                   auditService: AuditService,
-                                                  hateoasFactory: HateoasFactory,
                                                   cc: ControllerComponents,
                                                   val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
     extends AuthorisedController(cc) {
@@ -69,7 +65,7 @@ class AmendInsurancePoliciesController @Inject() (val authService: EnrolmentsAut
           requestBody = Some(request.body),
           includeResponse = true
         ))
-        .withHateoasResult(hateoasFactory)(AmendInsurancePoliciesHateoasData(nino, taxYear))
+        .withNoContentResult(successStatus = OK)
 
       requestHandler.handleRequest(rawData)
     }

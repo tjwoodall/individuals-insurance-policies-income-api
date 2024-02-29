@@ -17,13 +17,11 @@
 package v1.controllers
 
 import api.controllers.{AuthorisedController, EndpointLogContext, RequestContext, RequestHandler}
-import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.requestParsers.RetrieveInsurancePoliciesRequestParser
 import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRawData
-import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesHateoasData
 import v1.services.RetrieveInsurancePoliciesService
 
 import javax.inject.{Inject, Singleton}
@@ -34,7 +32,6 @@ class RetrieveInsurancePoliciesController @Inject() (val authService: Enrolments
                                                      val lookupService: MtdIdLookupService,
                                                      parser: RetrieveInsurancePoliciesRequestParser,
                                                      service: RetrieveInsurancePoliciesService,
-                                                     hateoasFactory: HateoasFactory,
                                                      cc: ControllerComponents,
                                                      val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
     extends AuthorisedController(cc) {
@@ -58,7 +55,7 @@ class RetrieveInsurancePoliciesController @Inject() (val authService: Enrolments
         RequestHandler
           .withParser(parser)
           .withService(service.retrieve)
-          .withHateoasResult(hateoasFactory)(RetrieveInsurancePoliciesHateoasData(nino, taxYear))
+          .withPlainJsonResult()
 
       requestHandler.handleRequest(rawData)
     }

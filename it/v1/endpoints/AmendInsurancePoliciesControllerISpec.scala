@@ -137,29 +137,6 @@ class AmendInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
       """.stripMargin
     )
 
-    val hateoasResponse: JsValue = Json.parse(
-      s"""
-         |{
-         |   "links":[
-         |      {
-         |         "href":"/individuals/insurance-policies-income/$nino/$taxYear",
-         |         "rel":"create-and-amend-insurance-policies-income",
-         |         "method":"PUT"
-         |      },
-         |      {
-         |         "href":"/individuals/insurance-policies-income/$nino/$taxYear",
-         |         "rel":"self",
-         |         "method":"GET"
-         |      },
-         |      {
-         |         "href":"/individuals/insurance-policies-income/$nino/$taxYear",
-         |         "rel":"delete-insurance-policies-income",
-         |         "method":"DELETE"
-         |      }
-         |   ]
-         |}
-        """.stripMargin
-    )
 
     def setupStubs(): StubMapping
 
@@ -201,8 +178,7 @@ class AmendInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().put(requestBodyJson))
         response.status shouldBe OK
-        response.body[JsValue] shouldBe hateoasResponse
-        response.header("Content-Type") shouldBe Some("application/json")
+        response.body shouldBe ""
       }
 
       "any valid request is made for a TYS tax year" in new TysIfsTest {
@@ -216,8 +192,7 @@ class AmendInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
 
         val response: WSResponse = await(request().put(requestBodyJson))
         response.status shouldBe OK
-        response.body[JsValue] shouldBe hateoasResponse
-        response.header("Content-Type") shouldBe Some("application/json")
+        response.body shouldBe ""
       }
     }
 

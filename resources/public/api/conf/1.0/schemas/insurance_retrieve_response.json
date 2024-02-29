@@ -29,8 +29,7 @@
       "type": "array",
       "description": "Financial details about foreign policies Items income",
       "items": {"$ref": "insurance_definitions.json#/definitions/foreignObject"}
-    },
-    "links": {"$ref": "insurance_definitions.json#/definitions/links"}
+    }
   },
   "required": ["submittedOn"]
 }

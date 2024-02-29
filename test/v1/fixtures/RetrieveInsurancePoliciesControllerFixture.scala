@@ -16,7 +16,7 @@
 
 package v1.fixtures
 
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 
 object RetrieveInsurancePoliciesControllerFixture {
 
@@ -78,31 +78,5 @@ object RetrieveInsurancePoliciesControllerFixture {
       |}
     """.stripMargin
   )
-
-  def mtdResponseWithHateoas(nino: String, taxYear: String): JsObject = fullRetrieveInsurancePoliciesResponse.as[JsObject] ++ Json
-    .parse(
-      s"""
-       |{
-       |   "links":[
-       |      {
-       |         "href":"/individuals/insurance-policies-income/$nino/$taxYear",
-       |         "method":"PUT",
-       |         "rel":"create-and-amend-insurance-policies-income"
-       |      },
-       |      {
-       |         "href":"/individuals/insurance-policies-income/$nino/$taxYear",
-       |         "method":"GET",
-       |         "rel":"self"
-       |      },
-       |      {
-       |         "href":"/individuals/insurance-policies-income/$nino/$taxYear",
-       |         "method":"DELETE",
-       |         "rel":"delete-insurance-policies-income"
-       |      }
-       |   ]
-       |}
-    """.stripMargin
-    )
-    .as[JsObject]
 
 }
