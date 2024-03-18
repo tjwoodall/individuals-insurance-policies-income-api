@@ -23,6 +23,7 @@ import api.models.request.RawData
 import cats.data.EitherT
 import cats.implicits._
 import config.AppConfig
+import routing.{Version, Version1}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Writes}
 import play.api.mvc.Result
@@ -113,8 +114,9 @@ object RequestHandler {
           message = s"[${ctx.endpointLogContext.controllerName}][${ctx.endpointLogContext.endpointName}] " +
             s"with correlationId : ${ctx.correlationId}")
 
+        val version = Version.from(request, Version1)
         val maybeGovTestScenario =
-          ctx.hc.otherHeaders.contains("Gov-Test-Scenario" -> "REQUEST_CANNOT_BE_FULFILLED") && appConfig.allowRequestCannotBeFulfilledHeader
+          ctx.hc.otherHeaders.contains("Gov-Test-Scenario" -> "REQUEST_CANNOT_BE_FULFILLED") && appConfig.allowRequestCannotBeFulfilledHeader(version)
 
         val result = if (maybeGovTestScenario) {
           EitherT[Future, ErrorWrapper, Result](Future.successful(Left(ErrorWrapper(ctx.correlationId, RuleRequestCannotBeFulfilled))))
