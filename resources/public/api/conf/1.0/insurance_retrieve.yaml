@@ -12,8 +12,8 @@ description: |
   | -------------------------------- | ---------------------------------------------------------------- |
   | N/A - DEFAULT                    | Simulates success response.                                      |
   | NOT_FOUND                        | Simulates the scenario where no data is found.                   |
-  | STATEFUL                         | Performs a stateful delete.                                      |
   | REQUEST_CANNOT_BE_FULFILLED      | Simulates the scenario where the request could not be processed. |
+  | STATEFUL                         | Performs a stateful delete.                                      |
 
 parameters:
   - $ref: './common/pathParameters.yaml#/components/parameters/nino'
