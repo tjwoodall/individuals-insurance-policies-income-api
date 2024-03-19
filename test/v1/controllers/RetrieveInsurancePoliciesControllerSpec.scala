@@ -20,6 +20,7 @@ import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.models.domain.{Nino, TaxYear, Timestamp}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
+import mocks.MockAppConfig
 import play.api.mvc.Result
 import v1.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
 import v1.mocks.requestParsers.MockRetrieveInsurancePoliciesRequestParser
@@ -34,7 +35,8 @@ class RetrieveInsurancePoliciesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockRetrieveInsurancePoliciesService
-    with MockRetrieveInsurancePoliciesRequestParser {
+    with MockRetrieveInsurancePoliciesRequestParser
+    with MockAppConfig {
 
   val taxYear: String = "2019-20"
 
