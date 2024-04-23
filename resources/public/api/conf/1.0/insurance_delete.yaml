@@ -1,5 +1,4 @@
-summary:
-  Delete Insurance Policies Income
+summary: Delete Insurance Policies Income [Test only]
 description: |
   This endpoint enables you to delete insurance policies and less common types of income:
   Life Insurance Policies, Life Annuity Contracts, Capital Redemption Policies, Voided ISAs, Foreign Policies.
