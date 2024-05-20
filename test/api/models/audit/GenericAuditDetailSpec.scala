@@ -16,149 +16,97 @@
 
 package api.models.audit
 
-import api.models.errors.TaxYearFormatError
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 
 class GenericAuditDetailSpec extends UnitSpec {
 
-  val nino: String                         = "XX751130C"
+  val auditErrors: Seq[AuditError] = Seq(AuditError(errorCode = "FORMAT_NINO"), AuditError(errorCode = "FORMAT_TAX_YEAR"))
+  val body: JsValue                = Json.parse("""{ "aField" : "aValue" }""")
+
+  val nino: String                         = "ZG903729C"
   val taxYear: String                      = "2021-22"
-  val employmentId: String                 = "4557ecb5-fd32-48cc-81f5-e6acd1099f3c"
   val userType: String                     = "Agent"
   val agentReferenceNumber: Option[String] = Some("012345678")
-  val correlationId: String                = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  val versionNumber                        = "1.0"
+  val pathParams: Map[String, String]      = Map("nino" -> nino, "taxYear" -> taxYear)
+  val requestBody: Option[JsValue]         = None
+  val xCorrId                              = "a1e8057e-fbbc-47a8-a8b478d9f015c253"
+
+  val auditResponseModelWithBody: AuditResponse =
+    AuditResponse(
+      httpStatus = OK,
+      response = Right(Some(body))
+    )
+
+  val auditDetailModelSuccess: GenericAuditDetail =
+    GenericAuditDetail(
+      userType = userType,
+      agentReferenceNumber = agentReferenceNumber,
+      versionNumber = versionNumber,
+      params = pathParams,
+      requestBody = requestBody,
+      `X-CorrelationId` = xCorrId,
+      auditResponse = auditResponseModelWithBody
+    )
+
+  val auditResponseModelWithErrors: AuditResponse =
+    AuditResponse(
+      httpStatus = BAD_REQUEST,
+      response = Left(auditErrors)
+    )
+
+  val auditDetailModelError: GenericAuditDetail =
+    auditDetailModelSuccess.copy(
+      auditResponse = auditResponseModelWithErrors
+    )
 
   val auditDetailJsonSuccess: JsValue = Json.parse(
     s"""
-      |{
-      |    "userType": "$userType",
-      |    "agentReferenceNumber": "${agentReferenceNumber.get}",
-      |    "nino": "$nino",
-      |    "taxYear": "$taxYear",
-      |    "request": {
-      |       "employerRef": "123/AB56797",
-      |       "employerName": "AMD infotech Ltd",
-      |       "startDate": "2019-01-01",
-      |       "cessationDate": "2020-06-01",
-      |       "payrollId": "124214112412"
-      |    },
-      |    "X-CorrelationId": "$correlationId",
-      |    "response": {
-      |      "httpStatus": $OK,
-      |      "body": {
-      |          "links":[
-      |             {
-      |                "href":"/individuals/insurance-policies-income/insurance-policies/$nino/$taxYear",
-      |                "method":"PUT",
-      |                "rel":"create-and-amend-insurance-policies-income"
-      |             },
-      |             {
-      |                "href":"/individuals/insurance-policies-income/insurance-policies/$nino/$taxYear",
-      |                "method":"GET",
-      |                "rel":"self"
-      |             },
-      |             {
-      |                "href":"/individuals/insurance-policies-income/insurance-policies/$nino/$taxYear",
-      |                "method":"DELETE",
-      |                "rel":"delete-insurance-policies-income"
-      |             }
-      |          ]
-      |       }
-      |    }
-      |}
+       |{
+       |   "userType" : "$userType",
+       |   "agentReferenceNumber" : "${agentReferenceNumber.get}",
+       |   "versionNumber":"$versionNumber",
+       |   "nino" : "$nino",
+       |   "taxYear" : "$taxYear",
+       |   "response":{
+       |     "httpStatus": ${auditResponseModelWithBody.httpStatus},
+       |     "body": ${auditResponseModelWithBody.body.get}
+       |   },
+       |   "X-CorrelationId": "$xCorrId"
+       |}
     """.stripMargin
   )
 
-  val auditDetailModelSuccess: GenericAuditDetail = GenericAuditDetail(
-    userType = userType,
-    agentReferenceNumber = agentReferenceNumber,
-    params = Map("nino" -> nino, "taxYear" -> taxYear),
-    request = Some(
-      Json.parse(
-        """
-        |{
-        |   "employerRef": "123/AB56797",
-        |   "employerName": "AMD infotech Ltd",
-        |   "startDate": "2019-01-01",
-        |   "cessationDate": "2020-06-01",
-        |   "payrollId": "124214112412"
-        |}
-        """.stripMargin
-      )),
-    `X-CorrelationId` = correlationId,
-    response = AuditResponse(
-      OK,
-      Right(Some(Json.parse(s"""
-        {
-        | "links":[
-        |    {
-        |       "href":"/individuals/insurance-policies-income/insurance-policies/$nino/$taxYear",
-        |       "method":"PUT",
-        |       "rel":"create-and-amend-insurance-policies-income"
-        |    },
-        |    {
-        |       "href":"/individuals/insurance-policies-income/insurance-policies/$nino/$taxYear",
-        |       "method":"GET",
-        |       "rel":"self"
-        |    },
-        |    {
-        |       "href":"/individuals/insurance-policies-income/insurance-policies/$nino/$taxYear",
-        |       "method":"DELETE",
-        |       "rel":"delete-insurance-policies-income"
-        |    }
-        | ]
-        |}
-        """.stripMargin)))
-    )
-  )
-
-  val invalidTaxYearAuditDetailJson: JsValue = Json.parse(
+  val auditResponseJsonWithErrors: JsValue = Json.parse(
     s"""
-      |{
-      |    "userType": "$userType",
-      |    "agentReferenceNumber": "${agentReferenceNumber.get}",
-      |    "nino": "$nino",
-      |    "taxYear" : "2021-2022",
-      |    "request": {
-      |       "employerRef": "123/AB56797",
-      |       "employerName": "AMD infotech Ltd",
-      |       "startDate": "2019-01-01",
-      |       "cessationDate": "2020-06-01",
-      |       "payrollId": "124214112412"
-      |    },
-      |    "X-CorrelationId": "$correlationId",
-      |    "response": {
-      |      "httpStatus": $BAD_REQUEST,
-      |      "errors": [
-      |        {
-      |          "errorCode": "FORMAT_TAX_YEAR"
-      |        }
-      |      ]
-      |    }
-      |}
+       |{
+       |  "httpStatus": $BAD_REQUEST,
+       |  "errors" : [
+       |    {
+       |      "errorCode" : "FORMAT_NINO"
+       |    },
+       |    {
+       |      "errorCode" : "FORMAT_TAX_YEAR"
+       |    }
+       |  ]
+       |}
     """.stripMargin
   )
 
-  val invalidTaxYearAuditDetailModel: GenericAuditDetail = GenericAuditDetail(
-    userType = userType,
-    agentReferenceNumber = agentReferenceNumber,
-    params = Map("nino" -> nino, "taxYear" -> "2021-2022"),
-    request = Some(
-      Json.parse(
-        """
-        |{
-        |   "employerRef": "123/AB56797",
-        |   "employerName": "AMD infotech Ltd",
-        |   "startDate": "2019-01-01",
-        |   "cessationDate": "2020-06-01",
-        |   "payrollId": "124214112412"
-        |}
-      """.stripMargin
-      )),
-    `X-CorrelationId` = correlationId,
-    response = AuditResponse(BAD_REQUEST, Left(Seq(AuditError(TaxYearFormatError.code))))
+  val auditDetailJsonError: JsValue = Json.parse(
+    s"""
+       |{
+       |   "userType" : "$userType",
+       |   "agentReferenceNumber" : "${agentReferenceNumber.get}",
+       |   "versionNumber":"$versionNumber",
+       |   "nino": "$nino",
+       |   "taxYear" : "$taxYear",
+       |   "response": $auditResponseJsonWithErrors,
+       |   "X-CorrelationId": "$xCorrId"
+       |}
+     """.stripMargin
   )
 
   "GenericAuditDetail" when {
@@ -170,7 +118,7 @@ class GenericAuditDetailSpec extends UnitSpec {
 
     "written to JSON (error)" should {
       "produce the expected JsObject" in {
-        Json.toJson(invalidTaxYearAuditDetailModel) shouldBe invalidTaxYearAuditDetailJson
+        Json.toJson(auditDetailModelError) shouldBe auditDetailJsonError
       }
     }
   }

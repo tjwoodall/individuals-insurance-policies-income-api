@@ -49,10 +49,10 @@ class DeleteInsurancePoliciesController @Inject() (val authService: EnrolmentsAu
 
     val rawData: DeleteInsurancePoliciesRawData = DeleteInsurancePoliciesRawData(nino = nino, taxYear = taxYear)
 
-    val requestHandler = RequestHandler
+    val requestHandler = RequestHandlerOld
       .withParser(parser)
       .withService(service.delete)
-      .withAuditing(AuditHandler(
+      .withAuditing(AuditHandlerOld(
         auditService = auditService,
         auditType = "DeleteInsurancePolicies",
         transactionName = "delete-insurance-policies",

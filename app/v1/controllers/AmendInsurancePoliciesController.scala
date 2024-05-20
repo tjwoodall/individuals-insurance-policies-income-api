@@ -55,10 +55,10 @@ class AmendInsurancePoliciesController @Inject() (val authService: EnrolmentsAut
         body = AnyContentAsJson(request.body)
       )
 
-      val requestHandler = RequestHandler
+      val requestHandler = RequestHandlerOld
         .withParser(parser)
         .withService(service.amendInsurancePolicies)
-        .withAuditing(AuditHandler(
+        .withAuditing(AuditHandlerOld(
           auditService = auditService,
           auditType = "CreateAmendInsurancePolicies",
           transactionName = "create-amend-insurance-policies",

@@ -17,11 +17,11 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.services.MockAuditService
-import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetailOld}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
+import api.services.MockAuditService
 import mocks.MockAppConfig
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
@@ -90,7 +90,7 @@ class DeleteInsurancePoliciesControllerSpec
     }
   }
 
-  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
+  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetailOld] {
 
     val controller = new DeleteInsurancePoliciesController(
       authService = mockEnrolmentsAuthService,
@@ -104,11 +104,11 @@ class DeleteInsurancePoliciesControllerSpec
 
     protected def callController(): Future[Result] = controller.delete(nino, taxYear)(fakeDeleteRequest)
 
-    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
+    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetailOld] =
       AuditEvent(
         auditType = "DeleteInsurancePolicies",
         transactionName = "delete-insurance-policies",
-        detail = GenericAuditDetail(
+        detail = GenericAuditDetailOld(
           userType = "Individual",
           agentReferenceNumber = None,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
