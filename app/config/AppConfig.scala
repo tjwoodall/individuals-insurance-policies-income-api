@@ -16,12 +16,18 @@
 
 package config
 
+import cats.data.Validated
+import cats.implicits.catsSyntaxValidatedId
 import com.typesafe.config.Config
+import config.Deprecation.{Deprecated, NotDeprecated}
 import play.api.{ConfigLoader, Configuration}
 import routing.Version
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.time.LocalDateTime
+import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
+import java.time.temporal.ChronoField
 import javax.inject.{Inject, Singleton}
 
 trait AppConfig {
@@ -35,6 +41,7 @@ trait AppConfig {
   lazy val api1661DownstreamConfig: DownstreamConfig =
     DownstreamConfig(baseUrl = api1661BaseUrl, env = api1661Env, token = api1661Token, environmentHeaders = api1661EnvironmentHeaders)
 
+  def appName: String
   // IFS Config
   def ifsBaseUrl: String
 
@@ -77,10 +84,16 @@ trait AppConfig {
   def minimumPermittedTaxYear: Int
 
   def allowRequestCannotBeFulfilledHeader(version: Version): Boolean
+
+  def apiDocumentationUrl: String
+
+  def deprecationFor(version: Version): Validated[String, Deprecation]
 }
 
 @Singleton
 class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configuration) extends AppConfig {
+
+  def appName: String = config.getString("appName")
 
   val mtdIdBaseUrl: String = config.baseUrl("mtd-id-lookup")
 
@@ -116,6 +129,50 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
 
   def allowRequestCannotBeFulfilledHeader(version: Version): Boolean =
     config.getBoolean(s"api.$version.endpoints.allow-request-cannot-be-fulfilled-header")
+
+  def apiDocumentationUrl: String =
+    configuration
+      .get[Option[String]]("api.documentation-url")
+      .getOrElse(s"https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/$appName")
+
+  private val DATE_FORMATTER = new DateTimeFormatterBuilder()
+    .append(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    .parseDefaulting(ChronoField.HOUR_OF_DAY, 23)
+    .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 59)
+    .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 59)
+    .toFormatter()
+
+  def deprecationFor(version: Version): Validated[String, Deprecation] = {
+    val isApiDeprecated: Boolean = apiStatus(version) == "DEPRECATED"
+
+    val deprecatedOn: Option[LocalDateTime] =
+      configuration
+        .getOptional[String](s"api.$version.deprecatedOn")
+        .map(value => LocalDateTime.parse(value, DATE_FORMATTER))
+
+    val sunsetDate: Option[LocalDateTime] =
+      configuration
+        .getOptional[String](s"api.$version.sunsetDate")
+        .map(value => LocalDateTime.parse(value, DATE_FORMATTER))
+
+    val isSunsetEnabled: Boolean =
+      configuration.getOptional[Boolean](s"api.$version.sunsetEnabled").getOrElse(true)
+
+    if (isApiDeprecated) {
+      (deprecatedOn, sunsetDate, isSunsetEnabled) match {
+        case (Some(dO), Some(sD), true) =>
+          if (sD.isAfter(dO))
+            Deprecated(dO, Some(sD)).valid
+          else
+            s"sunsetDate must be later than deprecatedOn date for a deprecated version $version".invalid
+        case (Some(dO), None, true) => Deprecated(dO, Some(dO.plusMonths(6).plusDays(1))).valid
+        case (Some(dO), _, false)   => Deprecated(dO, None).valid
+        case _                      => s"deprecatedOn date is required for a deprecated version $version".invalid
+      }
+
+    } else NotDeprecated.valid
+
+  }
 
 }
 
