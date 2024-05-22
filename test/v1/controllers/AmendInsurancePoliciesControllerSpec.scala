@@ -252,7 +252,7 @@ class AmendInsurancePoliciesControllerSpec
     foreign = Some(foreign)
   )
 
-  val requestData: AmendInsurancePoliciesRequest = AmendInsurancePoliciesRequest(
+  val requestData: AmendInsurancePoliciesRequestData = AmendInsurancePoliciesRequestData(
     nino = Nino(validNino),
     taxYear = TaxYear.fromMtd(taxYear),
     body = amendInsurancePoliciesRequestBody

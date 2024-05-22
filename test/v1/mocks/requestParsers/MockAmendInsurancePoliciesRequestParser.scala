@@ -20,7 +20,7 @@ import api.models.errors.ErrorWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.AmendInsurancePoliciesRequestParser
-import v1.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRawData, AmendInsurancePoliciesRequest}
+import v1.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRawData, AmendInsurancePoliciesRequestData}
 
 trait MockAmendInsurancePoliciesRequestParser extends MockFactory {
 
@@ -28,7 +28,7 @@ trait MockAmendInsurancePoliciesRequestParser extends MockFactory {
 
   object MockAmendInsurancePoliciesRequestParser {
 
-    def parse(data: AmendInsurancePoliciesRawData): CallHandler[Either[ErrorWrapper, AmendInsurancePoliciesRequest]] = {
+    def parse(data: AmendInsurancePoliciesRawData): CallHandler[Either[ErrorWrapper, AmendInsurancePoliciesRequestData]] = {
       (mockAmendInsurancePoliciesRequestParser.parseRequest(_: AmendInsurancePoliciesRawData)(_: String)).expects(data, *)
     }
 

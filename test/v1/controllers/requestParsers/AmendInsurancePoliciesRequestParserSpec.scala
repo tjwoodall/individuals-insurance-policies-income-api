@@ -242,7 +242,7 @@ class AmendInsurancePoliciesRequestParserSpec extends UnitSpec {
     foreign = Some(foreign)
   )
 
-  val requestData: AmendInsurancePoliciesRequest = AmendInsurancePoliciesRequest(
+  val requestData: AmendInsurancePoliciesRequestData = AmendInsurancePoliciesRequestData(
     nino = Nino(nino),
     taxYear = taxYear,
     body = amendInsurancePoliciesRequestBody

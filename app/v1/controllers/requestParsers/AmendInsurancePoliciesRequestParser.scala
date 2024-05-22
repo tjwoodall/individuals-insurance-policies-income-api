@@ -19,15 +19,15 @@ package v1.controllers.requestParsers
 import api.controllers.requestParsers.RequestParser
 import api.models.domain.{Nino, TaxYear}
 import v1.controllers.requestParsers.validators.AmendInsurancePoliciesValidator
-import v1.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRawData, AmendInsurancePoliciesRequest, AmendInsurancePoliciesRequestBody}
+import v1.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRawData, AmendInsurancePoliciesRequestData, AmendInsurancePoliciesRequestBody}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AmendInsurancePoliciesRequestParser @Inject() (val validator: AmendInsurancePoliciesValidator)
-    extends RequestParser[AmendInsurancePoliciesRawData, AmendInsurancePoliciesRequest] {
+    extends RequestParser[AmendInsurancePoliciesRawData, AmendInsurancePoliciesRequestData] {
 
-  override protected def requestFor(data: AmendInsurancePoliciesRawData): AmendInsurancePoliciesRequest =
-    AmendInsurancePoliciesRequest(Nino(data.nino), TaxYear.fromMtd(data.taxYear), data.body.json.as[AmendInsurancePoliciesRequestBody])
+  override protected def requestFor(data: AmendInsurancePoliciesRawData): AmendInsurancePoliciesRequestData =
+    AmendInsurancePoliciesRequestData(Nino(data.nino), TaxYear.fromMtd(data.taxYear), data.body.json.as[AmendInsurancePoliciesRequestBody])
 
 }
