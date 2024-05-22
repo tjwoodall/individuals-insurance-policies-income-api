@@ -21,7 +21,7 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.DeleteInsurancePoliciesConnector
-import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequest
+import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,10 +32,10 @@ trait MockDeleteInsurancePoliciesConnector extends MockFactory {
 
   object MockDeleteInsurancePoliciesConnector {
 
-    def deleteInsurancePoliciesConnector(requestData: DeleteInsurancePoliciesRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+    def deleteInsurancePoliciesConnector(requestData: DeleteInsurancePoliciesRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
       (
         mockDeleteInsurancePoliciesConnector
-          .deleteInsurancePolicies(_: DeleteInsurancePoliciesRequest)(
+          .deleteInsurancePolicies(_: DeleteInsurancePoliciesRequestData)(
             _: HeaderCarrier,
             _: ExecutionContext,
             _: String

@@ -20,9 +20,9 @@ import api.controllers._
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import routing.Version1
 import utils.IdGenerator
-import v1.controllers.requestParsers.DeleteInsurancePoliciesRequestParser
-import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRawData
+import v1.controllers.validators.DeleteInsurancePoliciesValidatorFactory
 import v1.services.DeleteInsurancePoliciesService
 
 import javax.inject.{Inject, Singleton}
@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class DeleteInsurancePoliciesController @Inject() (val authService: EnrolmentsAuthService,
                                                    val lookupService: MtdIdLookupService,
-                                                   parser: DeleteInsurancePoliciesRequestParser,
+                                                   validatorFactory: DeleteInsurancePoliciesValidatorFactory,
                                                    service: DeleteInsurancePoliciesService,
                                                    auditService: AuditService,
                                                    cc: ControllerComponents,
@@ -47,20 +47,21 @@ class DeleteInsurancePoliciesController @Inject() (val authService: EnrolmentsAu
   def delete(nino: String, taxYear: String): Action[AnyContent] = authorisedAction(nino).async { implicit request =>
     implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-    val rawData: DeleteInsurancePoliciesRawData = DeleteInsurancePoliciesRawData(nino = nino, taxYear = taxYear)
+    val validator = validatorFactory.validator(nino, taxYear)
 
-    val requestHandler = RequestHandlerOld
-      .withParser(parser)
+    val requestHandler = RequestHandler
+      .withValidator(validator)
       .withService(service.delete)
-      .withAuditing(AuditHandlerOld(
+      .withAuditing(AuditHandler(
         auditService = auditService,
         auditType = "DeleteInsurancePolicies",
         transactionName = "delete-insurance-policies",
+        apiVersion = Version1,
         params = Map("nino" -> nino, "taxYear" -> taxYear),
         requestBody = None
       ))
 
-    requestHandler.handleRequest(rawData)
+    requestHandler.handleRequest()
   }
 
 }

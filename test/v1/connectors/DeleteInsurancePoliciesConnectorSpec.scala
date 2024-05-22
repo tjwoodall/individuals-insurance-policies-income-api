@@ -20,7 +20,7 @@ import api.connectors.ConnectorSpec
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.{InternalError, NinoFormatError}
 import api.models.outcomes.ResponseWrapper
-import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequest
+import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
 import scala.concurrent.Future
 
@@ -38,7 +38,7 @@ class DeleteInsurancePoliciesConnectorSpec extends ConnectorSpec {
       appConfig = mockAppConfig
     )
 
-    protected val request: DeleteInsurancePoliciesRequest = DeleteInsurancePoliciesRequest(Nino(nino), taxYear)
+    protected val request: DeleteInsurancePoliciesRequestData = DeleteInsurancePoliciesRequestData(Nino(nino), taxYear)
 
   }
 

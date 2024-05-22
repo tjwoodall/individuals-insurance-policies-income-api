@@ -20,9 +20,9 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import mocks.MockAppConfig
 import support.UnitSpec
-import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
+import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
-class RetrieveInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockAppConfig {
+class DeleteInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockAppConfig {
   private implicit val correlationId: String = "1234"
 
   private val validNino    = "AA123456A"
@@ -31,10 +31,9 @@ class RetrieveInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockAp
   private val parsedNino    = Nino(validNino)
   private val parsedTaxYear = TaxYear.fromMtd(validTaxYear)
 
-  private val validatorFactory = new RetrieveInsurancePoliciesValidatorFactory(mockAppConfig)
+  private val validatorFactory = new DeleteInsurancePoliciesValidatorFactory(mockAppConfig)
 
-  private def validator(nino: String, taxYear: String) =
-    validatorFactory.validator(nino, taxYear)
+  private def validator(nino: String, taxYear: String) = validatorFactory.validator(nino, taxYear)
 
   MockedAppConfig.minimumPermittedTaxYear
     .returns(2021)
@@ -42,57 +41,60 @@ class RetrieveInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockAp
 
   "validator" should {
     "return the parsed domain object" when {
-      "a valid request is supplied" in {
-        val result = validator(validNino, validTaxYear).validateAndWrapResult()
-        result shouldBe Right(RetrieveInsurancePoliciesRequestData(parsedNino, parsedTaxYear))
+      "passed a valid request" in {
+        val result: Either[ErrorWrapper, DeleteInsurancePoliciesRequestData] =
+          validator(validNino, validTaxYear).validateAndWrapResult()
+
+        result shouldBe Right(DeleteInsurancePoliciesRequestData(parsedNino, parsedTaxYear))
       }
     }
 
     "return NinoFormatError error" when {
       "an invalid nino is supplied" in {
-        val result = validator("A12344A", validTaxYear).validateAndWrapResult()
-        result shouldBe Left(
-          ErrorWrapper(correlationId, NinoFormatError)
-        )
+        val result: Either[ErrorWrapper, DeleteInsurancePoliciesRequestData] =
+          validator("A12344A", validTaxYear).validateAndWrapResult()
+
+        result shouldBe Left(ErrorWrapper(correlationId, NinoFormatError))
       }
     }
 
     "return TaxYearFormatError error" when {
       "an invalid tax year is supplied" in {
-        val result = validator(validNino, "201718").validateAndWrapResult()
-        result shouldBe Left(
-          ErrorWrapper(correlationId, TaxYearFormatError)
-        )
+        val result: Either[ErrorWrapper, DeleteInsurancePoliciesRequestData] =
+          validator(validNino, "20178").validateAndWrapResult()
+
+        result shouldBe Left(ErrorWrapper(correlationId, TaxYearFormatError))
       }
     }
 
     "return RuleTaxYearRangeInvalidError error" when {
       "an invalid tax year range is supplied" in {
-        val result = validator(validNino, "2019-22").validateAndWrapResult()
-        result shouldBe Left(
-          ErrorWrapper(correlationId, RuleTaxYearRangeInvalidError)
-        )
+        val result: Either[ErrorWrapper, DeleteInsurancePoliciesRequestData] =
+          validator(validNino, "2019-21").validateAndWrapResult()
+
+        result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearRangeInvalidError))
       }
     }
 
     "return RuleTaxYearNotSupportedError error" when {
       "an invalid tax year is supplied" in {
-        val result = validator(validNino, "2018-19").validateAndWrapResult()
-        result shouldBe Left(
-          ErrorWrapper(correlationId, RuleTaxYearNotSupportedError)
-        )
+        val result: Either[ErrorWrapper, DeleteInsurancePoliciesRequestData] =
+          validator(validNino, "2018-19").validateAndWrapResult()
+
+        result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))
       }
     }
 
     "return multiple errors" when {
       "request supplied has multiple errors" in {
-        val result = validator("not-a-nino", "2017-19").validateAndWrapResult()
+        val result: Either[ErrorWrapper, DeleteInsurancePoliciesRequestData] =
+          validator("A12344A", "20178").validateAndWrapResult()
 
         result shouldBe Left(
           ErrorWrapper(
             correlationId,
             BadRequestError,
-            Some(List(NinoFormatError, RuleTaxYearRangeInvalidError))
+            Some(List(NinoFormatError, TaxYearFormatError))
           )
         )
       }

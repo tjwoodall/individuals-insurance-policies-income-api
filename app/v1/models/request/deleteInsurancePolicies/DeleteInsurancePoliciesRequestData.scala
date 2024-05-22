@@ -18,4 +18,4 @@ package v1.models.request.deleteInsurancePolicies
 
 import api.models.domain.{Nino, TaxYear}
 
-case class DeleteInsurancePoliciesRequest(nino: Nino, taxYear: TaxYear)
+case class DeleteInsurancePoliciesRequestData(nino: Nino, taxYear: TaxYear)
