@@ -43,12 +43,12 @@ class DeleteInsurancePoliciesControllerSpec
   val taxYear: String = "2019-20"
 
   val rawData: DeleteInsurancePoliciesRawData = DeleteInsurancePoliciesRawData(
-    nino = nino,
+    nino = validNino,
     taxYear = taxYear
   )
 
   val requestData: DeleteInsurancePoliciesRequest = DeleteInsurancePoliciesRequest(
-    nino = Nino(nino),
+    nino = Nino(validNino),
     taxYear = TaxYear.fromMtd(taxYear)
   )
 
@@ -102,7 +102,7 @@ class DeleteInsurancePoliciesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.delete(nino, taxYear)(fakeDeleteRequest)
+    protected def callController(): Future[Result] = controller.delete(validNino, taxYear)(fakeRequest)
 
     def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetailOld] =
       AuditEvent(
@@ -111,7 +111,7 @@ class DeleteInsurancePoliciesControllerSpec
         detail = GenericAuditDetailOld(
           userType = "Individual",
           agentReferenceNumber = None,
-          params = Map("nino" -> nino, "taxYear" -> taxYear),
+          params = Map("nino" -> validNino, "taxYear" -> taxYear),
           request = None,
           `X-CorrelationId` = correlationId,
           response = auditResponse

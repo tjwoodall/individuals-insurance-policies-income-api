@@ -16,13 +16,12 @@
 
 package v1.controllers
 
-import api.controllers.{AuthorisedController, EndpointLogContext, RequestContext, RequestHandlerOld}
+import api.controllers.{AuthorisedController, EndpointLogContext, RequestContext, RequestHandler}
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
-import v1.controllers.requestParsers.RetrieveInsurancePoliciesRequestParser
-import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRawData
+import v1.controllers.validators.RetrieveInsurancePoliciesValidatorFactory
 import v1.services.RetrieveInsurancePoliciesService
 
 import javax.inject.{Inject, Singleton}
@@ -31,7 +30,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class RetrieveInsurancePoliciesController @Inject() (val authService: EnrolmentsAuthService,
                                                      val lookupService: MtdIdLookupService,
-                                                     parser: RetrieveInsurancePoliciesRequestParser,
+                                                     validatorFactory: RetrieveInsurancePoliciesValidatorFactory,
                                                      service: RetrieveInsurancePoliciesService,
                                                      cc: ControllerComponents,
                                                      val idGenerator: IdGenerator)(implicit ec: ExecutionContext, appConfig: AppConfig)
@@ -47,18 +46,18 @@ class RetrieveInsurancePoliciesController @Inject() (val authService: Enrolments
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData: RetrieveInsurancePoliciesRawData = RetrieveInsurancePoliciesRawData(
+      val validator = validatorFactory.validator(
         nino = nino,
         taxYear = taxYear
       )
 
       val requestHandler =
-        RequestHandlerOld
-          .withParser(parser)
+        RequestHandler
+          .withValidator(validator)
           .withService(service.retrieve)
           .withPlainJsonResult()
 
-      requestHandler.handleRequest(rawData)
+      requestHandler.handleRequest()
     }
 
 }

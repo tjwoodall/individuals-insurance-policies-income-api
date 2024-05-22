@@ -21,7 +21,7 @@ import api.models.errors._
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
 import v1.connectors.RetrieveInsurancePoliciesConnector
-import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequest
+import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
 
 import javax.inject.{Inject, Singleton}
@@ -30,9 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveInsurancePoliciesService @Inject() (connector: RetrieveInsurancePoliciesConnector) extends BaseService {
 
-  def retrieve(request: RetrieveInsurancePoliciesRequest)(implicit
-      ctx: RequestContext,
-      ec: ExecutionContext): Future[ServiceOutcome[RetrieveInsurancePoliciesResponse]] = {
+  def retrieve(request: RetrieveInsurancePoliciesRequestData)(implicit
+                                                              ctx: RequestContext,
+                                                              ec: ExecutionContext): Future[ServiceOutcome[RetrieveInsurancePoliciesResponse]] = {
 
     connector.retrieveInsurancePolicies(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 

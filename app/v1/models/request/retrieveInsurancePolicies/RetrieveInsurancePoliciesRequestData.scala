@@ -16,6 +16,6 @@
 
 package v1.models.request.retrieveInsurancePolicies
 
-import api.models.request.RawData
+import api.models.domain.{Nino, TaxYear}
 
-case class RetrieveInsurancePoliciesRawData(nino: String, taxYear: String) extends RawData
+case class RetrieveInsurancePoliciesRequestData(nino: Nino, taxYear: TaxYear)

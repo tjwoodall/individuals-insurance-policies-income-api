@@ -142,7 +142,7 @@ class AmendInsurancePoliciesControllerSpec
   )
 
   val rawData: AmendInsurancePoliciesRawData = AmendInsurancePoliciesRawData(
-    nino = nino,
+    nino = validNino,
     taxYear = taxYear,
     body = AnyContentAsJson(requestBodyJson)
   )
@@ -253,7 +253,7 @@ class AmendInsurancePoliciesControllerSpec
   )
 
   val requestData: AmendInsurancePoliciesRequest = AmendInsurancePoliciesRequest(
-    nino = Nino(nino),
+    nino = Nino(validNino),
     taxYear = TaxYear.fromMtd(taxYear),
     body = amendInsurancePoliciesRequestBody
   )
@@ -316,7 +316,7 @@ class AmendInsurancePoliciesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.amendInsurancePolicies(nino, taxYear)(fakePutRequest(requestBodyJson))
+    protected def callController(): Future[Result] = controller.amendInsurancePolicies(validNino, taxYear)(fakePostRequest(requestBodyJson))
 
     def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetailOld] =
       AuditEvent(
@@ -325,7 +325,7 @@ class AmendInsurancePoliciesControllerSpec
         detail = GenericAuditDetailOld(
           userType = "Individual",
           agentReferenceNumber = None,
-          params = Map("nino" -> nino, "taxYear" -> taxYear),
+          params = Map("nino" -> validNino, "taxYear" -> taxYear),
           request = requestBody,
           `X-CorrelationId` = correlationId,
           response = auditResponse
