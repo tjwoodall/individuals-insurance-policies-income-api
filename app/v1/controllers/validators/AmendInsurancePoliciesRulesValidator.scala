@@ -17,17 +17,16 @@
 package v1.controllers.validators
 
 import api.controllers.validators.RulesValidator
-import api.controllers.validators.resolvers.{ResolveParsedNumber, ResolveStringPattern}
+import api.controllers.validators.resolvers.{ResolveInteger, ResolveParsedNumber, ResolveStringPattern}
 import api.models.errors.{CustomerRefFormatError, EventFormatError, MtdError}
 import cats.data.Validated
 import cats.implicits._
-import v1.controllers.validators.resolvers.ResolveIntegerNumber
-import v1.models.request.amendInsurancePolicies.{AmendCommonInsurancePoliciesItem, AmendInsurancePoliciesRequestData}
+import v1.models.request.amendInsurancePolicies.{AmendCommonInsurancePoliciesItem, AmendForeignPoliciesItem, AmendInsurancePoliciesRequestData, AmendVoidedIsaPoliciesItem}
 
 object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsurancePoliciesRequestData] {
 
   private val resolveNonNegativeDecimalNumber        = ResolveParsedNumber()
-  private val resolveNonNegativeMinimumIntegerNumber = ResolveIntegerNumber()
+  private val resolveNonNegativeMinimumIntegerNumber = ResolveInteger()
 
   private val regex = "^[0-9a-zA-Z{À-˿'}\\- _&`():.'^]{1,90}$".r
 
@@ -48,6 +47,16 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
       lifeAnnuity
         .map(_.zipWithIndex.traverse_ { case (lifeAnnuity, index) =>
           validateCommonItem(lifeAnnuity, "lifeAnnuity", index)
+        })
+        .getOrElse(valid),
+      voidedIsa
+        .map(_.zipWithIndex.traverse_ { case (voidedIsa, index) =>
+          validateVoidedIsa(voidedIsa, index)
+        })
+        .getOrElse(valid),
+      foreign
+        .map(_.zipWithIndex.traverse_ { case (foreign, index) =>
+          validateForeign(foreign, index)
         })
         .getOrElse(valid)
     ).onSuccess(parsed)
@@ -82,6 +91,59 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
     }
 
     combine(validatedCustomerRef, validatedEvent, validatedMandatoryDecimalNumber, validatedOptionalDecimalNumber, validatedOptionalIntegerNumbers)
+
+  }
+
+  private def validateVoidedIsa(voidedIsa: AmendVoidedIsaPoliciesItem, arrayIndex: Int): Validated[Seq[MtdError], Unit] = {
+    import voidedIsa._
+
+    val validatedCustomerRef = customerReference match {
+      case Some(value) =>
+        val resolveCustomerRef = new ResolveStringPattern(regex, CustomerRefFormatError.withPath(s"/voidedIsa/$arrayIndex/customerReference"))
+        resolveCustomerRef(value)
+      case None => valid
+    }
+
+    val validatedEvent = event match {
+      case Some(value) =>
+        val resolveEvent = new ResolveStringPattern(regex, EventFormatError.withPath(s"/voidedIsa/$arrayIndex/event"))
+        resolveEvent(value)
+      case None => valid
+    }
+
+    val validatedMandatoryDecimalNumber = resolveNonNegativeDecimalNumber(gainAmount, s"/voidedIsa/$arrayIndex/gainAmount")
+
+    val validatedOptionalDecimalNumber = resolveNonNegativeDecimalNumber(taxPaidAmount, s"/voidedIsa/$arrayIndex/taxPaidAmount")
+
+    val validatedOptionalIntegerNumbers = List(
+      (yearsHeld, s"/voidedIsa/$arrayIndex/yearsHeld"),
+      (yearsHeldSinceLastGain, s"/voidedIsa/$arrayIndex/yearsHeldSinceLastGain")
+    ).traverse_ { case (value, path) =>
+      resolveNonNegativeMinimumIntegerNumber(value, path)
+    }
+
+    combine(validatedCustomerRef, validatedEvent, validatedMandatoryDecimalNumber, validatedOptionalDecimalNumber, validatedOptionalIntegerNumbers)
+
+  }
+
+  private def validateForeign(foreign: AmendForeignPoliciesItem, arrayIndex: Int): Validated[Seq[MtdError], Unit] = {
+    import foreign._
+
+    val validatedCustomerRef = customerReference match {
+      case Some(value) =>
+        val resolveCustomerRef = new ResolveStringPattern(regex, CustomerRefFormatError.withPath(s"/foreign/$arrayIndex/customerReference"))
+        resolveCustomerRef(value)
+      case None => valid
+    }
+
+    val validatedMandatoryDecimalNumber = resolveNonNegativeDecimalNumber(gainAmount, s"/foreign/$arrayIndex/gainAmount")
+
+    val validatedOptionalDecimalNumber = resolveNonNegativeDecimalNumber(taxPaidAmount, s"/foreign/$arrayIndex/taxPaidAmount")
+
+    val validatedOptionalIntegerNumber =
+      resolveNonNegativeMinimumIntegerNumber(yearsHeld, s"/foreign/$arrayIndex/yearsHeld")
+
+    combine(validatedCustomerRef, validatedMandatoryDecimalNumber, validatedOptionalDecimalNumber, validatedOptionalIntegerNumber)
 
   }
 

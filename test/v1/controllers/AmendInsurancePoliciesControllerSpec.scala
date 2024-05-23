@@ -17,15 +17,15 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetailOld}
+import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.MockAuditService
 import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContentAsJson, Result}
-import v1.mocks.requestParsers.MockAmendInsurancePoliciesRequestParser
+import play.api.mvc.Result
+import v1.controllers.validators.MockAmendInsurancePoliciesValidatorFactory
 import v1.mocks.services.MockAmendInsurancePoliciesService
 import v1.models.request.amendInsurancePolicies._
 
@@ -37,7 +37,7 @@ class AmendInsurancePoliciesControllerSpec
     with ControllerTestRunner
     with MockAmendInsurancePoliciesService
     with MockAuditService
-    with MockAmendInsurancePoliciesRequestParser
+    with MockAmendInsurancePoliciesValidatorFactory
     with MockAppConfig {
 
   val taxYear = "2019-20"
@@ -139,12 +139,6 @@ class AmendInsurancePoliciesControllerSpec
       |   ]
       |}
     """.stripMargin
-  )
-
-  val rawData: AmendInsurancePoliciesRawData = AmendInsurancePoliciesRawData(
-    nino = validNino,
-    taxYear = taxYear,
-    body = AnyContentAsJson(requestBodyJson)
   )
 
   val lifeInsurance: Seq[AmendCommonInsurancePoliciesItem] = Seq(
@@ -258,19 +252,14 @@ class AmendInsurancePoliciesControllerSpec
     body = amendInsurancePoliciesRequestBody
   )
 
-
-
   "AmendInsurancePoliciesController" should {
     "return a successful response with status 200 (OK)" when {
       "the request received is valid" in new Test {
-        MockAmendInsurancePoliciesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockAmendInsurancePoliciesService
           .amendInsurancePolicies(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
-
 
         runOkTestWithAudit(
           expectedStatus = OK,
@@ -283,17 +272,13 @@ class AmendInsurancePoliciesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-        MockAmendInsurancePoliciesRequestParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError, Some(requestBodyJson))
       }
 
       "the service returns an error" in new Test {
-        MockAmendInsurancePoliciesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockAmendInsurancePoliciesService
           .amendInsurancePolicies(requestData)
@@ -304,12 +289,12 @@ class AmendInsurancePoliciesControllerSpec
     }
   }
 
-  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetailOld] {
+  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
     val controller = new AmendInsurancePoliciesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockAmendInsurancePoliciesRequestParser,
+      validatorFactory = mockAmendInsurancePoliciesValidatorFactory,
       service = mockAmendInsurancePoliciesService,
       auditService = mockAuditService,
       cc = cc,
@@ -318,17 +303,18 @@ class AmendInsurancePoliciesControllerSpec
 
     protected def callController(): Future[Result] = controller.amendInsurancePolicies(validNino, taxYear)(fakePostRequest(requestBodyJson))
 
-    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetailOld] =
+    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
         auditType = "CreateAmendInsurancePolicies",
         transactionName = "create-amend-insurance-policies",
-        detail = GenericAuditDetailOld(
+        detail = GenericAuditDetail(
           userType = "Individual",
           agentReferenceNumber = None,
+          versionNumber = "1.0",
           params = Map("nino" -> validNino, "taxYear" -> taxYear),
-          request = requestBody,
+          requestBody = requestBody,
           `X-CorrelationId` = correlationId,
-          response = auditResponse
+          auditResponse = auditResponse
         )
       )
 

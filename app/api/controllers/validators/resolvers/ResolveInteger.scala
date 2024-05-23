@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package v1.controllers.validators.resolvers
+package api.controllers.validators.resolvers
 
-import api.controllers.validators.resolvers.ResolverSupport
 import api.models.errors.{MtdError, ValueFormatError}
 import cats.data.Validated
 
-case class ResolveIntegerNumber(min: Int = 0, max: Int = 99) extends ResolverSupport {
+case class ResolveInteger(min: Int = 0, max: Int = 99) extends ResolverSupport {
 
   def resolver(error: => MtdError): Resolver[Int, Int] =
     resolveValid[Int] thenValidate validator(error)

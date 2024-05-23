@@ -20,10 +20,10 @@ import api.controllers._
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.AppConfig
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, AnyContentAsJson, ControllerComponents}
+import play.api.mvc.{Action, ControllerComponents}
+import routing.Version1
 import utils.IdGenerator
-import v1.controllers.requestParsers.AmendInsurancePoliciesRequestParser
-import v1.models.request.amendInsurancePolicies.AmendInsurancePoliciesRawData
+import v1.controllers.validators.AmendInsurancePoliciesValidatorFactory
 import v1.services.AmendInsurancePoliciesService
 
 import javax.inject.{Inject, Singleton}
@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class AmendInsurancePoliciesController @Inject() (val authService: EnrolmentsAuthService,
                                                   val lookupService: MtdIdLookupService,
-                                                  parser: AmendInsurancePoliciesRequestParser,
+                                                  validatorFactory: AmendInsurancePoliciesValidatorFactory,
                                                   service: AmendInsurancePoliciesService,
                                                   auditService: AuditService,
                                                   cc: ControllerComponents,
@@ -49,26 +49,23 @@ class AmendInsurancePoliciesController @Inject() (val authService: EnrolmentsAut
     authorisedAction(nino).async(parse.json) { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData: AmendInsurancePoliciesRawData = AmendInsurancePoliciesRawData(
-        nino = nino,
-        taxYear = taxYear,
-        body = AnyContentAsJson(request.body)
-      )
+      val validator = validatorFactory.validator(nino, taxYear, request.body)
 
-      val requestHandler = RequestHandlerOld
-        .withParser(parser)
+      val requestHandler = RequestHandler
+        .withValidator(validator)
         .withService(service.amendInsurancePolicies)
-        .withAuditing(AuditHandlerOld(
+        .withAuditing(AuditHandler(
           auditService = auditService,
           auditType = "CreateAmendInsurancePolicies",
           transactionName = "create-amend-insurance-policies",
+          apiVersion = Version1,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
           requestBody = Some(request.body),
           includeResponse = true
         ))
         .withNoContentResult(successStatus = OK)
 
-      requestHandler.handleRequest(rawData)
+      requestHandler.handleRequest()
     }
 
 }
