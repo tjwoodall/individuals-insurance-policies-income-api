@@ -16,7 +16,6 @@
 
 package v1.controllers.validators
 
-import api.controllers.requestParsers.validators.validations.ValueFormatErrorMessages
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import mocks.MockAppConfig
@@ -24,11 +23,14 @@ import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import v1.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRequestBody, AmendInsurancePoliciesRequestData}
 
-class AmendInsurancePoliciesValidatorFactorySpec extends UnitSpec with ValueFormatErrorMessages with MockAppConfig {
+class AmendInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockAppConfig {
   private implicit val correlationId: String = "1234"
 
   private val validNino    = "AA123456A"
   private val validTaxYear = "2020-21"
+
+  private val ZERO_MINIMUM_INCLUSIVE         = "The value must be between 0 and 99999999999.99"
+  private val ZERO_MINIMUM_INTEGER_INCLUSIVE = "The value must be between 0 and 99"
 
   private val validRequestBodyJson: JsValue = Json.parse(
     """
