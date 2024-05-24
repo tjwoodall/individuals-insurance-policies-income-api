@@ -19,7 +19,7 @@ package api.controllers.validators.resolvers
 import api.models.errors.{MtdError, ValueFormatError}
 import cats.data.Validated
 
-case class ResolveInteger(min: Int = 0, max: Int = 99) extends ResolverSupport {
+case class ResolveInteger(min: Int, max: Int) extends ResolverSupport {
 
   def resolver(error: => MtdError): Resolver[Int, Int] =
     resolveValid[Int] thenValidate validator(error)

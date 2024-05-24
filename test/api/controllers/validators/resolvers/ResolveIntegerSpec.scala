@@ -55,31 +55,6 @@ class ResolveIntegerSpec extends UnitSpec with ScalaCheckDrivenPropertyChecks {
         }
       }
     }
-
-    "min and max are not specified" must {
-      val resolve = ResolveInteger()
-      val error   = ValueFormatError.copy(paths = Some(List(path)), message = "The value must be between 0 and 99")
-
-      "allow 0" in {
-        val result = resolve(0, path)
-        result shouldBe Valid(0)
-      }
-
-      "disallow less than 0" in {
-        val result = resolve(-1, path)
-        result shouldBe Invalid(List(error))
-      }
-
-      "allow 99" in {
-        val result = resolve(99, path)
-        result shouldBe Valid(99)
-      }
-
-      "disallow more than 103" in {
-        val result = resolve(103, path)
-        result shouldBe Invalid(List(error))
-      }
-    }
   }
 
 }

@@ -26,7 +26,7 @@ import v1.models.request.amendInsurancePolicies.{AmendCommonInsurancePoliciesIte
 object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsurancePoliciesRequestData] {
 
   private val resolveNonNegativeDecimalNumber        = ResolveParsedNumber()
-  private val resolveNonNegativeMinimumIntegerNumber = ResolveInteger()
+  private val resolveNonNegativeMinimumIntegerNumber = ResolveInteger(0, 99)
 
   private val regex = "^[0-9a-zA-Z{À-˿'}\\- _&`():.'^]{1,90}$".r
 
