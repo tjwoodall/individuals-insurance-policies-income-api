@@ -21,7 +21,7 @@ import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequest
+import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
 
 import javax.inject.{Inject, Singleton}
@@ -30,10 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveInsurancePoliciesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def retrieveInsurancePolicies(request: RetrieveInsurancePoliciesRequest)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      correlationId: String): Future[DownstreamOutcome[RetrieveInsurancePoliciesResponse]] = {
+  def retrieveInsurancePolicies(request: RetrieveInsurancePoliciesRequestData)(implicit
+                                                                               hc: HeaderCarrier,
+                                                                               ec: ExecutionContext,
+                                                                               correlationId: String): Future[DownstreamOutcome[RetrieveInsurancePoliciesResponse]] = {
 
     import request._
 

@@ -85,7 +85,7 @@ class AmendInsurancePoliciesServiceSpec extends ServiceSpec {
     foreign = Some(Seq(foreignModel))
   )
 
-  private val amendInsurancePoliciesRequest = AmendInsurancePoliciesRequest(
+  private val amendInsurancePoliciesRequest = AmendInsurancePoliciesRequestData(
     nino = Nino(nino),
     taxYear = taxYear,
     body = amendInsurancePoliciesRequestBody

@@ -33,6 +33,7 @@ class FlattenedGenericAuditDetailSpec extends UnitSpec with MockAppConfig {
   val userType: String                     = "Agent"
   val userDetails: UserDetails             = UserDetails("mtdId", userType, agentReferenceNumber)
   val correlationId: String                = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  private val auditResponse = AuditResponse(OK, None, None)
 
   val requestBodyJson: JsValue = Json.parse(
     """
@@ -69,6 +70,15 @@ class FlattenedGenericAuditDetailSpec extends UnitSpec with MockAppConfig {
     httpStatusCode = OK,
     errorCodes = None,
     responseBody = None
+  )
+
+  val auditDetailModelWithLessParametersSuccess: FlattenedGenericAuditDetail = FlattenedGenericAuditDetail(
+    versionNumber = Some(versionNumber),
+    userDetails = userDetails,
+    params = Map("nino" -> nino, "taxYear" -> taxYear),
+    request = Some(requestBodyJson),
+    `X-CorrelationId` = correlationId,
+    auditResponse = auditResponse
   )
 
   val invalidTaxYearAuditDetailJson: JsValue = Json.parse(
@@ -108,6 +118,13 @@ class FlattenedGenericAuditDetailSpec extends UnitSpec with MockAppConfig {
       "produce the expected JsObject" in {
         Json.toJson(auditDetailModelSuccess) shouldBe auditDetailJsonSuccess
       }
+    }
+
+      "provided with less parameters and written to JSON (success)" should {
+        "produce the expected JsObject" in {
+          Json.toJson(auditDetailModelWithLessParametersSuccess) shouldBe auditDetailJsonSuccess
+        }
+
     }
 
     "written to JSON (error)" should {

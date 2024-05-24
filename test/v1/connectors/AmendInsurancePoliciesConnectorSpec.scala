@@ -84,7 +84,7 @@ class AmendInsurancePoliciesConnectorSpec extends ConnectorSpec {
       foreign = Some(Seq(foreignModel))
     )
 
-    def request = AmendInsurancePoliciesRequest(
+    def request = AmendInsurancePoliciesRequestData(
       nino = Nino(nino),
       taxYear = taxYear,
       body = amendInsurancePoliciesBody

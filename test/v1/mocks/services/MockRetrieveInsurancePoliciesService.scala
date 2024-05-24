@@ -20,7 +20,7 @@ import api.controllers.RequestContext
 import api.services.ServiceOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequest
+import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
 import v1.services.RetrieveInsurancePoliciesService
 
@@ -33,9 +33,9 @@ trait MockRetrieveInsurancePoliciesService extends MockFactory {
 
   object MockRetrieveInsurancePoliciesService {
 
-    def retrieve(requestData: RetrieveInsurancePoliciesRequest): CallHandler[Future[ServiceOutcome[RetrieveInsurancePoliciesResponse]]] = (
+    def retrieve(requestData: RetrieveInsurancePoliciesRequestData): CallHandler[Future[ServiceOutcome[RetrieveInsurancePoliciesResponse]]] = (
       mockRetrieveInsurancePoliciesService
-        .retrieve(_: RetrieveInsurancePoliciesRequest)(
+        .retrieve(_: RetrieveInsurancePoliciesRequestData)(
           _: RequestContext,
           _: ExecutionContext
         )

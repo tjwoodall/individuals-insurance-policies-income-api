@@ -20,7 +20,7 @@ import api.controllers.RequestContext
 import api.services.ServiceOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.amendInsurancePolicies.AmendInsurancePoliciesRequest
+import v1.models.request.amendInsurancePolicies.AmendInsurancePoliciesRequestData
 import v1.services.AmendInsurancePoliciesService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,10 +31,10 @@ trait MockAmendInsurancePoliciesService extends MockFactory {
 
   object MockAmendInsurancePoliciesService {
 
-    def amendInsurancePolicies(requestData: AmendInsurancePoliciesRequest): CallHandler[Future[ServiceOutcome[Unit]]] = {
+    def amendInsurancePolicies(requestData: AmendInsurancePoliciesRequestData): CallHandler[Future[ServiceOutcome[Unit]]] = {
       (
         mockAmendInsurancePoliciesService
-          .amendInsurancePolicies(_: AmendInsurancePoliciesRequest)(
+          .amendInsurancePolicies(_: AmendInsurancePoliciesRequestData)(
             _: RequestContext,
             _: ExecutionContext
           )

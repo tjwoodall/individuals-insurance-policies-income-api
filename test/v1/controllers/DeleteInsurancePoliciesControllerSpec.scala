@@ -17,7 +17,7 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetailOld}
+import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
@@ -25,9 +25,9 @@ import api.services.MockAuditService
 import mocks.MockAppConfig
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockDeleteInsurancePoliciesParser
+import v1.controllers.validators.MockDeleteInsurancePoliciesValidatorFactory
 import v1.mocks.services.MockDeleteInsurancePoliciesService
-import v1.models.request.deleteInsurancePolicies.{DeleteInsurancePoliciesRawData, DeleteInsurancePoliciesRequest}
+import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,28 +36,21 @@ class DeleteInsurancePoliciesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockDeleteInsurancePoliciesService
-    with MockDeleteInsurancePoliciesParser
+    with MockDeleteInsurancePoliciesValidatorFactory
     with MockAuditService
     with MockAppConfig {
 
   val taxYear: String = "2019-20"
 
-  val rawData: DeleteInsurancePoliciesRawData = DeleteInsurancePoliciesRawData(
-    nino = nino,
-    taxYear = taxYear
-  )
-
-  val requestData: DeleteInsurancePoliciesRequest = DeleteInsurancePoliciesRequest(
-    nino = Nino(nino),
+  val requestData: DeleteInsurancePoliciesRequestData = DeleteInsurancePoliciesRequestData(
+    nino = Nino(validNino),
     taxYear = TaxYear.fromMtd(taxYear)
   )
 
   "DeleteInsurancePoliciesController" should {
     "return a successful response with status 204 (No Content)" when {
       "happy path" in new Test {
-        MockDeleteInsurancePoliciesParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockDeleteInsurancePoliciesService
           .deleteInsurancePoliciesService(requestData)
@@ -69,17 +62,13 @@ class DeleteInsurancePoliciesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-        MockDeleteInsurancePoliciesParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTestWithAudit(NinoFormatError)
       }
 
       "service returns an error" in new Test {
-        MockDeleteInsurancePoliciesParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockDeleteInsurancePoliciesService
           .deleteInsurancePoliciesService(requestData)
@@ -90,31 +79,32 @@ class DeleteInsurancePoliciesControllerSpec
     }
   }
 
-  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetailOld] {
+  trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
     val controller = new DeleteInsurancePoliciesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockDeleteInsurancePoliciesParser,
+      validatorFactory = mockDeleteInsurancePoliciesValidatorFactory,
       service = mockDeleteInsurancePoliciesService,
       auditService = mockAuditService,
       cc = cc,
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.delete(nino, taxYear)(fakeDeleteRequest)
+    protected def callController(): Future[Result] = controller.delete(validNino, taxYear)(fakeRequest)
 
-    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetailOld] =
+    def event(auditResponse: AuditResponse, requestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
         auditType = "DeleteInsurancePolicies",
         transactionName = "delete-insurance-policies",
-        detail = GenericAuditDetailOld(
+        detail = GenericAuditDetail(
           userType = "Individual",
           agentReferenceNumber = None,
-          params = Map("nino" -> nino, "taxYear" -> taxYear),
-          request = None,
+          versionNumber = "1.0",
+          params = Map("nino" -> validNino, "taxYear" -> taxYear),
+          requestBody = None,
           `X-CorrelationId` = correlationId,
-          response = auditResponse
+          auditResponse = auditResponse
         )
       )
 

@@ -21,7 +21,7 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.RetrieveInsurancePoliciesConnector
-import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequest
+import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,9 +32,9 @@ trait MockRetrieveInsurancePoliciesConnector extends MockFactory {
 
   object MockRetrieveInsurancePoliciesConnector {
 
-    def retrieve(requestData: RetrieveInsurancePoliciesRequest): CallHandler[Future[DownstreamOutcome[RetrieveInsurancePoliciesResponse]]] = {
+    def retrieve(requestData: RetrieveInsurancePoliciesRequestData): CallHandler[Future[DownstreamOutcome[RetrieveInsurancePoliciesResponse]]] = {
       (mockRetrieveInsurancePoliciesConnector
-        .retrieveInsurancePolicies(_: RetrieveInsurancePoliciesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .retrieveInsurancePolicies(_: RetrieveInsurancePoliciesRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
 

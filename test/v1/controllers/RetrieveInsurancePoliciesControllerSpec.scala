@@ -22,10 +22,10 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import mocks.MockAppConfig
 import play.api.mvc.Result
+import v1.controllers.validators.MockRetrieveInsurancePoliciesValidatorFactory
 import v1.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
-import v1.mocks.requestParsers.MockRetrieveInsurancePoliciesRequestParser
 import v1.mocks.services.MockRetrieveInsurancePoliciesService
-import v1.models.request.retrieveInsurancePolicies.{RetrieveInsurancePoliciesRawData, RetrieveInsurancePoliciesRequest}
+import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,18 +35,13 @@ class RetrieveInsurancePoliciesControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
     with MockRetrieveInsurancePoliciesService
-    with MockRetrieveInsurancePoliciesRequestParser
+    with MockRetrieveInsurancePoliciesValidatorFactory
     with MockAppConfig {
 
   val taxYear: String = "2019-20"
 
-  private val rawData: RetrieveInsurancePoliciesRawData = RetrieveInsurancePoliciesRawData(
-    nino = nino,
-    taxYear = taxYear
-  )
-
-  private val requestData: RetrieveInsurancePoliciesRequest = RetrieveInsurancePoliciesRequest(
-    nino = Nino(nino),
+  private val requestData: RetrieveInsurancePoliciesRequestData = RetrieveInsurancePoliciesRequestData(
+    nino = Nino(validNino),
     taxYear = TaxYear.fromMtd(taxYear)
   )
 
@@ -110,9 +105,7 @@ class RetrieveInsurancePoliciesControllerSpec
   "RetrieveInsurancePoliciesController" should {
     "return OK" when {
       "the request is valid" in new Test {
-        MockRetrieveInsurancePoliciesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockRetrieveInsurancePoliciesService
           .retrieve(requestData)
@@ -124,17 +117,13 @@ class RetrieveInsurancePoliciesControllerSpec
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-        MockRetrieveInsurancePoliciesRequestParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError, None)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTest(NinoFormatError)
       }
 
       "the service returns an error" in new Test {
-        MockRetrieveInsurancePoliciesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockRetrieveInsurancePoliciesService
           .retrieve(requestData)
@@ -150,13 +139,13 @@ class RetrieveInsurancePoliciesControllerSpec
     val controller = new RetrieveInsurancePoliciesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRetrieveInsurancePoliciesRequestParser,
+      validatorFactory = mockRetrieveInsurancePoliciesValidatorFactory,
       service = mockRetrieveInsurancePoliciesService,
       cc = cc,
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.retrieveInsurancePolicies(nino, taxYear)(fakeGetRequest)
+    protected def callController(): Future[Result] = controller.retrieveInsurancePolicies(validNino, taxYear)(fakeGetRequest)
   }
 
 }

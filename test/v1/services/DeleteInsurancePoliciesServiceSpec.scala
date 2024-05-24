@@ -22,7 +22,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.mocks.connectors.MockDeleteInsurancePoliciesConnector
-import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequest
+import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
 import scala.concurrent.Future
 
@@ -31,7 +31,7 @@ class DeleteInsurancePoliciesServiceSpec extends ServiceSpec {
   private val nino    = "AA112233A"
   private val taxYear = "2019-20"
 
-  private val requestData = DeleteInsurancePoliciesRequest(Nino(nino), TaxYear.fromMtd(taxYear))
+  private val requestData = DeleteInsurancePoliciesRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
   trait Test extends MockDeleteInsurancePoliciesConnector {
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")

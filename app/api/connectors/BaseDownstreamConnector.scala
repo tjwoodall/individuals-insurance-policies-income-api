@@ -33,7 +33,7 @@ trait BaseDownstreamConnector {
 
   private val jsonContentTypeHeader = HeaderNames.CONTENT_TYPE -> MimeTypes.JSON
 
-  def post[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp], intent: Option[String] = None)(implicit
+  def post[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp])(implicit
       ec: ExecutionContext,
       hc: HeaderCarrier,
       httpReads: HttpReads[DownstreamOutcome[Resp]],
@@ -43,13 +43,10 @@ trait BaseDownstreamConnector {
       http.POST(getBackendUri(uri), body)
     }
 
-    intent match {
-      case Some(intent) => doPost(getBackendHeaders(uri, hc, correlationId, jsonContentTypeHeader, intentHeader(intent)))
-      case None         => doPost(getBackendHeaders(uri, hc, correlationId, jsonContentTypeHeader))
-    }
+    doPost(getBackendHeaders(uri, hc, correlationId, jsonContentTypeHeader))
   }
 
-  def get[Resp](uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Seq.empty)(implicit
+  def get[Resp](uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Nil)(implicit
       ec: ExecutionContext,
       hc: HeaderCarrier,
       httpReads: HttpReads[DownstreamOutcome[Resp]],
@@ -71,11 +68,7 @@ trait BaseDownstreamConnector {
       http.DELETE(getBackendUri(uri))
     }
 
-    intent match {
-      case Some(intent) => doDelete(getBackendHeaders(uri, hc, correlationId, intentHeader(intent)))
-      case None         => doDelete(getBackendHeaders(uri, hc, correlationId))
-    }
-
+    doDelete(getBackendHeaders(uri, hc, correlationId))
   }
 
   def put[Body: Writes, Resp](uri: DownstreamUri[Resp], body: Body = "")(implicit
@@ -123,7 +116,5 @@ trait BaseDownstreamConnector {
       case TaxYearSpecificIfsUri(_) => appConfig.taxYearSpecificIfsDownstreamConfig
       case Api1661Uri(_)            => appConfig.api1661DownstreamConfig
     }
-
-  private def intentHeader(intent: String): (String, String) = "intent" -> intent
 
 }

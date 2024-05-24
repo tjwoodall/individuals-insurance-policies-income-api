@@ -19,7 +19,7 @@ package v1.connectors
 import api.connectors.ConnectorSpec
 import api.models.domain.{Nino, TaxYear, Timestamp}
 import api.models.outcomes.ResponseWrapper
-import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequest
+import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
 
 import scala.concurrent.Future
@@ -60,8 +60,8 @@ class RetrieveInsurancePoliciesConnectorSpec extends ConnectorSpec {
 
     protected val nino: String = "AA111111A"
 
-    protected val request: RetrieveInsurancePoliciesRequest =
-      RetrieveInsurancePoliciesRequest(
+    protected val request: RetrieveInsurancePoliciesRequestData =
+      RetrieveInsurancePoliciesRequestData(
         nino = Nino(nino),
         taxYear = taxYear
       )
