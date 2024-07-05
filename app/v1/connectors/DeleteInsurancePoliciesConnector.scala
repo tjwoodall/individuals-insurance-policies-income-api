@@ -44,8 +44,7 @@ class DeleteInsurancePoliciesConnector @Inject() (val http: HttpClient, val appC
       IfsUri[Unit](s"income-tax/insurance-policies/income/$nino/${taxYear.asMtd}")
     }
 
-    delete(downstreamUri)
-
+   delete(downstreamUri)
   }
 
 }
