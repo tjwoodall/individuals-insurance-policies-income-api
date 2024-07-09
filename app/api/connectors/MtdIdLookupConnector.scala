@@ -25,9 +25,17 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class MtdIdLookupConnector @Inject() (http: HttpClient, appConfig: AppConfig) {
 
-  def getMtdId(nino: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MtdIdLookupOutcome] = {
+  def getMtdId(nino: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MtdIdLookupConnector.Outcome] = {
     import api.connectors.httpparsers.MtdIdLookupHttpParser.mtdIdLookupHttpReads
-    http.GET[MtdIdLookupOutcome](s"${appConfig.mtdIdBaseUrl}/mtd-identifier-lookup/nino/$nino")
+
+    http.GET[MtdIdLookupConnector.Outcome](s"${appConfig.mtdIdBaseUrl}/mtd-identifier-lookup/nino/$nino")
   }
+
+}
+
+object MtdIdLookupConnector {
+  case class Error(statusCode: Int) extends AnyVal
+
+  type Outcome = Either[MtdIdLookupConnector.Error, String]
 
 }

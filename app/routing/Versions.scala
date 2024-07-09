@@ -98,8 +98,6 @@ case object Version9 extends Version {
 
 object Versions {
 
-  val latest: Version = Version1
-
   private val versionsByName: Map[String, Version] = Map(
     Version1.name -> Version1,
     Version2.name -> Version2,
