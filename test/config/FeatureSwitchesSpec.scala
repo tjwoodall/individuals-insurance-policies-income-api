@@ -16,10 +16,48 @@
 
 package config
 
+import play.api.Configuration
 import support.UnitSpec
 
 class FeatureSwitchesSpec extends UnitSpec {
 
-  "a feature switch" should {}
+  "FeatureSwitches" should {
+    "return true" when {
+      "the feature switch is set to true" in {
+        val config = Configuration(
+          "supporting-agents-access-control.enabled"                -> true,
+          "supporting-agents-access-control.released-in-production" -> true
+        )
+
+        val featureSwitches = FeatureSwitches(config)
+
+        featureSwitches.supportingAgentsAccessControlEnabled shouldBe true
+        featureSwitches.isReleasedInProduction("supporting-agents-access-control") shouldBe true
+      }
+
+      "the feature switch is not present in the config" in {
+        val config = Configuration.empty
+
+        val featureSwitches = FeatureSwitches(config)
+
+        featureSwitches.supportingAgentsAccessControlEnabled shouldBe true
+        featureSwitches.isReleasedInProduction("supporting-agents-access-control") shouldBe true
+      }
+    }
+
+    "return false" when {
+      "the feature switch is set to false" in {
+        val config = Configuration(
+          "supporting-agents-access-control.enabled"                -> false,
+          "supporting-agents-access-control.released-in-production" -> false
+        )
+
+        val featureSwitches = FeatureSwitches(config)
+
+        featureSwitches.supportingAgentsAccessControlEnabled shouldBe false
+        featureSwitches.isReleasedInProduction("supporting-agents-access-control") shouldBe false
+      }
+    }
+  }
 
 }

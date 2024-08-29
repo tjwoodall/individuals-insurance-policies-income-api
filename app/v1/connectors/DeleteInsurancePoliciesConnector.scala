@@ -30,9 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeleteInsurancePoliciesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def deleteInsurancePolicies(request: DeleteInsurancePoliciesRequestData)(implicit
-                                                                           hc: HeaderCarrier,
-                                                                           ec: ExecutionContext,
-                                                                           correlationId: String): Future[DownstreamOutcome[Unit]] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     import request._
 
@@ -44,7 +44,7 @@ class DeleteInsurancePoliciesConnector @Inject() (val http: HttpClient, val appC
       IfsUri[Unit](s"income-tax/insurance-policies/income/$nino/${taxYear.asMtd}")
     }
 
-   delete(downstreamUri)
+    delete(downstreamUri)
   }
 
 }

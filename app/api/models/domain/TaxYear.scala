@@ -123,6 +123,6 @@ object TaxYear {
   val fromDownstreamIntReads: Reads[TaxYear]             = implicitly[Reads[Int]].map(fromDownstreamInt)
   val toMtdWrites: Writes[TaxYear]                       = implicitly[Writes[String]].contramap(_.asMtd)
   implicit val downstreamIntToMtdFormat: Format[TaxYear] = Format(fromDownstreamIntReads, toMtdWrites)
-  implicit val ordering: Ordering[TaxYear] = Ordering.by(_.year)
+  implicit val ordering: Ordering[TaxYear]               = Ordering.by(_.year)
 
 }

@@ -18,7 +18,7 @@ package api.models.audit
 
 import api.models.auth.UserDetails
 import api.models.errors.TaxYearFormatError
-import mocks.MockAppConfig
+import config.MockAppConfig
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
@@ -33,7 +33,7 @@ class FlattenedGenericAuditDetailSpec extends UnitSpec with MockAppConfig {
   val userType: String                     = "Agent"
   val userDetails: UserDetails             = UserDetails("mtdId", userType, agentReferenceNumber)
   val correlationId: String                = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  private val auditResponse = AuditResponse(OK, None, None)
+  private val auditResponse                = AuditResponse(OK, None, None)
 
   val requestBodyJson: JsValue = Json.parse(
     """
@@ -120,10 +120,10 @@ class FlattenedGenericAuditDetailSpec extends UnitSpec with MockAppConfig {
       }
     }
 
-      "provided with less parameters and written to JSON (success)" should {
-        "produce the expected JsObject" in {
-          Json.toJson(auditDetailModelWithLessParametersSuccess) shouldBe auditDetailJsonSuccess
-        }
+    "provided with less parameters and written to JSON (success)" should {
+      "produce the expected JsObject" in {
+        Json.toJson(auditDetailModelWithLessParametersSuccess) shouldBe auditDetailJsonSuccess
+      }
 
     }
 

@@ -36,6 +36,8 @@ class RetrieveInsurancePoliciesController @Inject() (val authService: Enrolments
                                                      val idGenerator: IdGenerator)(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends AuthorisedController(cc) {
 
+  val endpointName: String = "retrieve-insurance-policies"
+
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(
       controllerName = "RetrieveInsurancePoliciesController",

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package mocks
+package config
 
 import cats.data.Validated
 import config.{AppConfig, ConfidenceLevelConfig, Deprecation}
-import org.scalamock.handlers.CallHandler
+import org.scalamock.handlers.{CallHandler, CallHandler0}
 import org.scalamock.scalatest.MockFactory
 import play.api.Configuration
 import routing.Version
@@ -57,6 +57,12 @@ trait MockAppConfig extends MockFactory {
 
     def confidenceLevelCheckEnabled: CallHandler[ConfidenceLevelConfig] =
       (() => mockAppConfig.confidenceLevelConfig).expects()
+
+    def confidenceLevelConfig: CallHandler0[ConfidenceLevelConfig] =
+      (() => mockAppConfig.confidenceLevelConfig).expects()
+
+    def endpointAllowsSupportingAgents(endpointName: String): CallHandler[Boolean] =
+      (mockAppConfig.endpointAllowsSupportingAgents(_: String)).expects(endpointName)
 
     def allowRequestCannotBeFulfilledHeader(version: Version): CallHandler[Boolean] =
       (mockAppConfig.allowRequestCannotBeFulfilledHeader: Version => Boolean).expects(version)

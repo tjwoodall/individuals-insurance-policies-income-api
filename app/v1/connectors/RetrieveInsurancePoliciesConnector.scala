@@ -31,9 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class RetrieveInsurancePoliciesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def retrieveInsurancePolicies(request: RetrieveInsurancePoliciesRequestData)(implicit
-                                                                               hc: HeaderCarrier,
-                                                                               ec: ExecutionContext,
-                                                                               correlationId: String): Future[DownstreamOutcome[RetrieveInsurancePoliciesResponse]] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[RetrieveInsurancePoliciesResponse]] = {
 
     import request._
 

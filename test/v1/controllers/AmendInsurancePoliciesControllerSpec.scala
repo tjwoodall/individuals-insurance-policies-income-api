@@ -22,9 +22,10 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.MockAuditService
-import mocks.MockAppConfig
+import config.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
+import play.api.Configuration
 import v1.controllers.validators.MockAmendInsurancePoliciesValidatorFactory
 import v1.mocks.services.MockAmendInsurancePoliciesService
 import v1.models.request.amendInsurancePolicies._
@@ -261,6 +262,12 @@ class AmendInsurancePoliciesControllerSpec
           .amendInsurancePolicies(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> false
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
         runOkTestWithAudit(
           expectedStatus = OK,
           maybeAuditRequestBody = Some(requestBodyJson),
@@ -274,6 +281,11 @@ class AmendInsurancePoliciesControllerSpec
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
 
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> false
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
         runErrorTestWithAudit(NinoFormatError, Some(requestBodyJson))
       }
 
@@ -283,6 +295,10 @@ class AmendInsurancePoliciesControllerSpec
         MockAmendInsurancePoliciesService
           .amendInsurancePolicies(requestData)
           .returns(Future.successful(Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))))
+
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> false
+        )
 
         runErrorTestWithAudit(RuleTaxYearNotSupportedError, Some(requestBodyJson))
       }

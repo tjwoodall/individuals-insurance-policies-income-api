@@ -22,9 +22,10 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.MockAuditService
-import mocks.MockAppConfig
+import config.MockAppConfig
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
+import play.api.Configuration
 import v1.controllers.validators.MockDeleteInsurancePoliciesValidatorFactory
 import v1.mocks.services.MockDeleteInsurancePoliciesService
 import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
@@ -55,6 +56,11 @@ class DeleteInsurancePoliciesControllerSpec
         MockDeleteInsurancePoliciesService
           .deleteInsurancePoliciesService(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> false
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runOkTestWithAudit(expectedStatus = NO_CONTENT)
       }
@@ -63,6 +69,12 @@ class DeleteInsurancePoliciesControllerSpec
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
+
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> false
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runErrorTestWithAudit(NinoFormatError)
       }
@@ -73,6 +85,11 @@ class DeleteInsurancePoliciesControllerSpec
         MockDeleteInsurancePoliciesService
           .deleteInsurancePoliciesService(requestData)
           .returns(Future.successful(Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))))
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> false
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runErrorTestWithAudit(RuleTaxYearNotSupportedError)
       }

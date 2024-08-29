@@ -26,4 +26,3 @@ object Source {
 
   implicit val format: json.Format[Source] = Enums.format[Source]
 }
-

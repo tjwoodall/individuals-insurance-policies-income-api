@@ -16,7 +16,7 @@
 
 package v1.endpoints
 
-import api.stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
+import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, NO_CONTENT}

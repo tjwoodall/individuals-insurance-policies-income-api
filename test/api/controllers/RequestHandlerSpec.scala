@@ -28,7 +28,7 @@ import cats.data.Validated.{Invalid, Valid}
 import cats.implicits.catsSyntaxValidatedId
 import config.Deprecation.{Deprecated, NotDeprecated}
 import config.{AppConfig, Deprecation}
-import mocks.MockAppConfig
+import config.MockAppConfig
 import org.scalamock.handlers.CallHandler
 import play.api.http.{HeaderNames, Status}
 import play.api.libs.json.{JsString, Json, OWrites}
@@ -43,7 +43,7 @@ import java.time.LocalDateTime
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 
 class RequestHandlerSpec
-  extends UnitSpec
+    extends UnitSpec
     with MockAuditService
     with MockIdGenerator
     with Status
