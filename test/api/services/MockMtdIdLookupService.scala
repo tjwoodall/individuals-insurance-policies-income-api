@@ -39,6 +39,6 @@ trait MockMtdIdLookupService extends MockFactory {
 
 }
 
-object MockMtdIdLookupService{
+object MockMtdIdLookupService {
   type MtdIdServiceOutcome = Either[MtdError, String]
 }

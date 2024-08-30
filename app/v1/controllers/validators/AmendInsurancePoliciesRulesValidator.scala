@@ -21,7 +21,12 @@ import api.controllers.validators.resolvers.{ResolveInteger, ResolveParsedNumber
 import api.models.errors.{CustomerRefFormatError, EventFormatError, MtdError}
 import cats.data.Validated
 import cats.implicits._
-import v1.models.request.amendInsurancePolicies.{AmendCommonInsurancePoliciesItem, AmendForeignPoliciesItem, AmendInsurancePoliciesRequestData, AmendVoidedIsaPoliciesItem}
+import v1.models.request.amendInsurancePolicies.{
+  AmendCommonInsurancePoliciesItem,
+  AmendForeignPoliciesItem,
+  AmendInsurancePoliciesRequestData,
+  AmendVoidedIsaPoliciesItem
+}
 
 object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsurancePoliciesRequestData] {
 

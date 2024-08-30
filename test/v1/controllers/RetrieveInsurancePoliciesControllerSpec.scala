@@ -20,8 +20,9 @@ import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.models.domain.{Nino, TaxYear, Timestamp}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
-import mocks.MockAppConfig
+import config.MockAppConfig
 import play.api.mvc.Result
+import play.api.Configuration
 import v1.controllers.validators.MockRetrieveInsurancePoliciesValidatorFactory
 import v1.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
 import v1.mocks.services.MockRetrieveInsurancePoliciesService
@@ -110,6 +111,11 @@ class RetrieveInsurancePoliciesControllerSpec
         MockRetrieveInsurancePoliciesService
           .retrieve(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, retrieveInsurancePoliciesResponseModel))))
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> false
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runOkTest(expectedStatus = OK, maybeExpectedResponseBody = Some(mtdResponse))
       }
@@ -118,6 +124,12 @@ class RetrieveInsurancePoliciesControllerSpec
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
+
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> false
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runErrorTest(NinoFormatError)
       }
@@ -129,6 +141,11 @@ class RetrieveInsurancePoliciesControllerSpec
           .retrieve(requestData)
           .returns(Future.successful(Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))))
 
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+          "supporting-agents-access-control.enabled" -> false
+        )
+
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
         runErrorTest(RuleTaxYearNotSupportedError)
       }
     }

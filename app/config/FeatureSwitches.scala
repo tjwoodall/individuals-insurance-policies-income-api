@@ -22,13 +22,25 @@ import play.api.Configuration
 import javax.inject.{Inject, Singleton}
 
 @ImplementedBy(classOf[FeatureSwitchesImpl])
-trait FeatureSwitches {}
+trait FeatureSwitches {
+
+  def supportingAgentsAccessControlEnabled: Boolean
+  def isReleasedInProduction(feature: String): Boolean
+}
 
 @Singleton
 class FeatureSwitchesImpl(featureSwitchConfig: Configuration) extends FeatureSwitches {
 
   @Inject
   def this(appConfig: AppConfig) = this(appConfig.featureSwitches)
+
+  val supportingAgentsAccessControlEnabled: Boolean = isEnabled("supporting-agents-access-control")
+
+  private def isEnabled(key: String): Boolean = isConfigTrue(key + ".enabled")
+
+  def isReleasedInProduction(feature: String): Boolean = isConfigTrue(feature + ".released-in-production")
+
+  private def isConfigTrue(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
 
 }
 

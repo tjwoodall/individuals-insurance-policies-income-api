@@ -32,4 +32,3 @@ object Status {
 
   implicit val format: Format[Status] = Enums.format[Status]
 }
-

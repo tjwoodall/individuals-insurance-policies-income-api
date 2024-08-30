@@ -30,9 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendInsurancePoliciesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def amendInsurancePolicies(request: AmendInsurancePoliciesRequestData)(implicit
-                                                                         hc: HeaderCarrier,
-                                                                         ec: ExecutionContext,
-                                                                         correlationId: String): Future[DownstreamOutcome[Unit]] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     import api.connectors.httpparsers.StandardDownstreamHttpParser._
 

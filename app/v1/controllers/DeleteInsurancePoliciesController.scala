@@ -38,6 +38,8 @@ class DeleteInsurancePoliciesController @Inject() (val authService: EnrolmentsAu
                                                    val idGenerator: IdGenerator)(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends AuthorisedController(cc) {
 
+  val endpointName: String = "delete-insurance-policies"
+
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(
       controllerName = "DeleteInsurancePoliciesController",

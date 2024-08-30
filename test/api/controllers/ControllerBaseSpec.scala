@@ -23,7 +23,8 @@ import api.models.errors.{BadRequestError, ErrorWrapper, MtdError}
 import api.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
 import cats.implicits.catsSyntaxValidatedId
 import config.Deprecation.NotDeprecated
-import mocks.MockAppConfig
+import config.RealAppConfig
+import config.MockAppConfig
 import play.api.http.{HeaderNames, MimeTypes, Status}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, Result}
@@ -52,7 +53,7 @@ class ControllerBaseSpec extends UnitSpec with Status with MimeTypes with Header
 
 }
 
-trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLookupService with MockIdGenerator {
+trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLookupService with MockIdGenerator with RealAppConfig {
   _: ControllerBaseSpec =>
 
   protected val validNino        = "AA123456A"
@@ -61,6 +62,8 @@ trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLooku
   protected val correlationId = "X-123"
 
   trait ControllerTest {
+
+    protected val controller: AuthorisedController
     protected val hc: HeaderCarrier = HeaderCarrier()
 
     MockedMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
@@ -78,6 +81,8 @@ trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLooku
         case Some(jsBody) => contentAsJson(result) shouldBe jsBody
         case None         => contentType(result) shouldBe empty
       }
+
+      checkEmaConfig()
     }
 
     protected def runErrorTest(expectedError: MtdError): Unit = {
@@ -97,6 +102,19 @@ trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLooku
       status(result) shouldBe BAD_REQUEST
       header("X-CorrelationId", result) shouldBe Some(correlationId)
       contentAsJson(result) shouldBe Json.toJson(expectedError)
+    }
+
+    private def checkEmaConfig(): Unit = {
+      val endpoints: Map[String, Boolean] = emaEndpoints
+
+      val endpointSupportingAgentsAllowed: Boolean =
+        endpoints
+          .getOrElse(
+            controller.endpointName,
+            fail(s"Controller endpoint name \"${controller.endpointName}\" not found in application.conf.")
+          )
+
+      realAppConfig.endpointAllowsSupportingAgents(controller.endpointName) shouldBe endpointSupportingAgentsAllowed
     }
 
     protected def callController(): Future[Result]

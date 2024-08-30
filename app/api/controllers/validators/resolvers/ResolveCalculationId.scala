@@ -30,4 +30,3 @@ object ResolveCalculationId extends ResolverSupport {
   def apply(value: String): Validated[Seq[MtdError], CalculationId] = resolver(value)
 
 }
-
