@@ -16,16 +16,12 @@
 
 package definition
 
-import config.ConfidenceLevelConfig
-import definition.APIStatus.{ALPHA, BETA}
 import config.MockAppConfig
+import definition.APIStatus.{ALPHA, BETA}
 import routing.Version1
 import support.UnitSpec
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 class ApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
-
-  private val confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
 
   class Test extends MockAppConfig {
     val apiDefinitionFactory = new ApiDefinitionFactory(mockAppConfig)
@@ -34,40 +30,12 @@ class ApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
 
   "definition" when {
     "called" should {
-      "return a valid Definition case class when confidence level 200 checking is enforced" in {
-        testDefinitionWithConfidence(ConfidenceLevelConfig(confidenceLevel = confidenceLevel, definitionEnabled = true, authValidationEnabled = true))
-      }
-
-      "return a valid Definition case class when confidence level checking 50 is enforced" in {
-        testDefinitionWithConfidence(
-          ConfidenceLevelConfig(confidenceLevel = confidenceLevel, definitionEnabled = false, authValidationEnabled = false))
-      }
-
-      def testDefinitionWithConfidence(confidenceLevelConfig: ConfidenceLevelConfig): Unit = new Test {
+      "return a valid Definition case class" in new Test {
         MockedAppConfig.apiStatus(Version1) returns "BETA"
         MockedAppConfig.endpointsEnabled(Version1) returns true
-        MockedAppConfig.confidenceLevelCheckEnabled.returns(confidenceLevelConfig).anyNumberOfTimes()
-
-        private val readScope                = "read:self-assessment"
-        private val writeScope               = "write:self-assessment"
-        val confidenceLevel: ConfidenceLevel = if (confidenceLevelConfig.authValidationEnabled) ConfidenceLevel.L200 else ConfidenceLevel.L50
 
         apiDefinitionFactory.definition shouldBe
           Definition(
-            scopes = List(
-              Scope(
-                key = readScope,
-                name = "View your Self Assessment information",
-                description = "Allow read access to self assessment data",
-                confidenceLevel
-              ),
-              Scope(
-                key = writeScope,
-                name = "Change your Self Assessment information",
-                description = "Allow write access to self assessment data",
-                confidenceLevel
-              )
-            ),
             api = APIDefinition(
               name = "Individuals Insurance Policies Income (MTD)",
               description = "An API for providing insurance policy income data",
@@ -83,24 +51,6 @@ class ApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
               requiresTrust = None
             )
           )
-      }
-    }
-  }
-
-  "confidenceLevel" when {
-    List(
-      (true, ConfidenceLevel.L250, ConfidenceLevel.L250),
-      (true, ConfidenceLevel.L200, ConfidenceLevel.L200),
-      (false, ConfidenceLevel.L200, ConfidenceLevel.L50)
-    ).foreach { case (definitionEnabled, configCL, expectedDefinitionCL) =>
-      s"confidence-level-check.definition.enabled is $definitionEnabled and confidence-level = $configCL" should {
-        s"return confidence level $expectedDefinitionCL" in new Test {
-          MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
-            confidenceLevel = configCL,
-            definitionEnabled = definitionEnabled,
-            authValidationEnabled = true)
-          apiDefinitionFactory.confidenceLevel shouldBe expectedDefinitionCL
-        }
       }
     }
   }
