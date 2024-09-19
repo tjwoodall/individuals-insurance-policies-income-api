@@ -19,6 +19,7 @@ package definition
 import config.AppConfig
 import play.api.Logging
 import routing.{Version, Version1}
+
 import javax.inject.{Inject, Singleton}
 
 @Singleton

@@ -16,7 +16,6 @@
 
 package config
 
-import config.FeatureSwitches
 import org.scalamock.scalatest.MockFactory
 
 trait MockFeatureSwitches extends MockFactory {

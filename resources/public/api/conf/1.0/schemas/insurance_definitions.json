@@ -62,18 +62,31 @@
       "minimum": 0,
       "maximum:": 99999999999.99
     },
-
     "lifeInsurance": {
       "type": "object",
       "description": "Financial details about life insurance income.",
       "properties": {
-        "customerReference": {"$ref": "#/definitions/customerReference"},
-        "event": {"$ref": "#/definitions/event"},
-        "gainAmount": {"$ref": "#/definitions/gainAmount"},
-        "taxPaid": {"$ref": "#/definitions/taxPaid"},
-        "yearsHeld": {"$ref": "#/definitions/yearsHeld"},
-        "yearsHeldSinceLastGain": {"$ref": "#/definitions/yearsHeldSinceLastGain"},
-        "deficiencyRelief": {"$ref": "#/definitions/deficiencyRelief"}
+        "customerReference": {
+          "$ref": "#/definitions/customerReference"
+        },
+        "event": {
+          "$ref": "#/definitions/event"
+        },
+        "gainAmount": {
+          "$ref": "#/definitions/gainAmount"
+        },
+        "taxPaid": {
+          "$ref": "#/definitions/taxPaid"
+        },
+        "yearsHeld": {
+          "$ref": "#/definitions/yearsHeld"
+        },
+        "yearsHeldSinceLastGain": {
+          "$ref": "#/definitions/yearsHeldSinceLastGain"
+        },
+        "deficiencyRelief": {
+          "$ref": "#/definitions/deficiencyRelief"
+        }
       },
       "required": [
         "gainAmount",
@@ -84,13 +97,27 @@
       "type": "object",
       "description": "Financial details about life capital redemption income.",
       "properties": {
-        "customerReference": {"$ref": "#/definitions/customerReference"},
-        "event": {"$ref": "#/definitions/event"},
-        "gainAmount": {"$ref": "#/definitions/gainAmount"},
-        "taxPaid": {"$ref": "#/definitions/taxPaid"},
-        "yearsHeld": {"$ref": "#/definitions/yearsHeld"},
-        "yearsHeldSinceLastGain": {"$ref": "#/definitions/yearsHeldSinceLastGain"},
-        "deficiencyRelief": {"$ref": "#/definitions/deficiencyRelief"}
+        "customerReference": {
+          "$ref": "#/definitions/customerReference"
+        },
+        "event": {
+          "$ref": "#/definitions/event"
+        },
+        "gainAmount": {
+          "$ref": "#/definitions/gainAmount"
+        },
+        "taxPaid": {
+          "$ref": "#/definitions/taxPaid"
+        },
+        "yearsHeld": {
+          "$ref": "#/definitions/yearsHeld"
+        },
+        "yearsHeldSinceLastGain": {
+          "$ref": "#/definitions/yearsHeldSinceLastGain"
+        },
+        "deficiencyRelief": {
+          "$ref": "#/definitions/deficiencyRelief"
+        }
       },
       "required": [
         "gainAmount",
@@ -101,13 +128,27 @@
       "type": "object",
       "description": "Financial details about life annuity income.",
       "properties": {
-        "customerReference": {"$ref": "#/definitions/customerReference"},
-        "event": {"$ref": "#/definitions/event"},
-        "gainAmount": {"$ref": "#/definitions/gainAmount"},
-        "taxPaid": {"$ref": "#/definitions/taxPaid"},
-        "yearsHeld": {"$ref": "#/definitions/yearsHeld"},
-        "yearsHeldSinceLastGain": {"$ref": "#/definitions/yearsHeldSinceLastGain"},
-        "deficiencyRelief": {"$ref": "#/definitions/deficiencyRelief"}
+        "customerReference": {
+          "$ref": "#/definitions/customerReference"
+        },
+        "event": {
+          "$ref": "#/definitions/event"
+        },
+        "gainAmount": {
+          "$ref": "#/definitions/gainAmount"
+        },
+        "taxPaid": {
+          "$ref": "#/definitions/taxPaid"
+        },
+        "yearsHeld": {
+          "$ref": "#/definitions/yearsHeld"
+        },
+        "yearsHeldSinceLastGain": {
+          "$ref": "#/definitions/yearsHeldSinceLastGain"
+        },
+        "deficiencyRelief": {
+          "$ref": "#/definitions/deficiencyRelief"
+        }
       },
       "required": [
         "gainAmount",
@@ -118,12 +159,24 @@
       "type": "object",
       "description": "Financial details about voided ISA's income.",
       "properties": {
-        "customerReference": {"$ref": "#/definitions/customerReference"},
-        "event": {"$ref": "#/definitions/event"},
-        "taxPaidAmount": {"$ref": "#/definitions/taxPaidAmount"},
-        "gainAmount": {"$ref": "#/definitions/gainAmount"},
-        "yearsHeld": {"$ref": "#/definitions/yearsHeld"},
-        "yearsHeldSinceLastGain": {"$ref": "#/definitions/yearsHeldSinceLastGain"}
+        "customerReference": {
+          "$ref": "#/definitions/customerReference"
+        },
+        "event": {
+          "$ref": "#/definitions/event"
+        },
+        "taxPaidAmount": {
+          "$ref": "#/definitions/taxPaidAmount"
+        },
+        "gainAmount": {
+          "$ref": "#/definitions/gainAmount"
+        },
+        "yearsHeld": {
+          "$ref": "#/definitions/yearsHeld"
+        },
+        "yearsHeldSinceLastGain": {
+          "$ref": "#/definitions/yearsHeldSinceLastGain"
+        }
       },
       "required": [
         "gainAmount"
@@ -133,10 +186,18 @@
       "type": "object",
       "description": "Financial details about foreign policies.",
       "properties": {
-        "customerReference": {"$ref": "#/definitions/customerReference"},
-        "gainAmount": {"$ref": "#/definitions/gainAmount"},
-        "taxPaidAmount": {"$ref": "#/definitions/taxPaidAmount"},
-        "yearsHeld": {"$ref": "#/definitions/yearsHeld"}
+        "customerReference": {
+          "$ref": "#/definitions/customerReference"
+        },
+        "gainAmount": {
+          "$ref": "#/definitions/gainAmount"
+        },
+        "taxPaidAmount": {
+          "$ref": "#/definitions/taxPaidAmount"
+        },
+        "yearsHeld": {
+          "$ref": "#/definitions/yearsHeld"
+        }
       },
       "required": [
         "gainAmount"

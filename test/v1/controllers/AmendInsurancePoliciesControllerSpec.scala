@@ -23,9 +23,9 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.MockAuditService
 import config.MockAppConfig
+import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import play.api.Configuration
 import v1.controllers.validators.MockAmendInsurancePoliciesValidatorFactory
 import v1.mocks.services.MockAmendInsurancePoliciesService
 import v1.models.request.amendInsurancePolicies._

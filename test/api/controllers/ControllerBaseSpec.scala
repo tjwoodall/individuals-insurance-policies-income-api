@@ -23,8 +23,7 @@ import api.models.errors.{BadRequestError, ErrorWrapper, MtdError}
 import api.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService}
 import cats.implicits.catsSyntaxValidatedId
 import config.Deprecation.NotDeprecated
-import config.RealAppConfig
-import config.MockAppConfig
+import config.{MockAppConfig, RealAppConfig}
 import play.api.http.{HeaderNames, MimeTypes, Status}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, Result}

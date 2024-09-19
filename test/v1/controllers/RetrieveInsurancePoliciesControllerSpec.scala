@@ -21,8 +21,8 @@ import api.models.domain.{Nino, TaxYear, Timestamp}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import config.MockAppConfig
-import play.api.mvc.Result
 import play.api.Configuration
+import play.api.mvc.Result
 import v1.controllers.validators.MockRetrieveInsurancePoliciesValidatorFactory
 import v1.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
 import v1.mocks.services.MockRetrieveInsurancePoliciesService

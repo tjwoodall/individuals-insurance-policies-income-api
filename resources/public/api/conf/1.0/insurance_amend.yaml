@@ -32,7 +32,7 @@ requestBody:
         $ref: './schemas/insurance_amend_request.json'
       examples:
         full_amendment:
-          description:  Full Insurance Policies Income Amendment
+          description: Full Insurance Policies Income Amendment
           value:
             $ref: './examples/amend_insurance_request.json'
 
