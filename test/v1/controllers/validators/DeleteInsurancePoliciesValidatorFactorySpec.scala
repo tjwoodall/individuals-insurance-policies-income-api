@@ -16,13 +16,13 @@
 
 package v1.controllers.validators
 
-import api.models.domain.{Nino, TaxYear}
-import api.models.errors._
-import config.MockAppConfig
-import support.UnitSpec
+import config.MockInsuranceAppConfig
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.utils.UnitSpec
 import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
-class DeleteInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockAppConfig {
+class DeleteInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockInsuranceAppConfig {
   private implicit val correlationId: String = "1234"
 
   private val validNino    = "AA123456A"
@@ -31,12 +31,12 @@ class DeleteInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockAppC
   private val parsedNino    = Nino(validNino)
   private val parsedTaxYear = TaxYear.fromMtd(validTaxYear)
 
-  private val validatorFactory = new DeleteInsurancePoliciesValidatorFactory(mockAppConfig)
+  private val validatorFactory = new DeleteInsurancePoliciesValidatorFactory(mockInsuranceAppConfig)
 
   private def validator(nino: String, taxYear: String) = validatorFactory.validator(nino, taxYear)
 
-  MockedAppConfig.minimumPermittedTaxYear
-    .returns(2021)
+  MockedInsuranceAppConfig.minimumPermittedTaxYear
+    .returns(TaxYear.ending(2021))
     .anyNumberOfTimes()
 
   "validator" should {

@@ -16,14 +16,16 @@
 
 package v1.controllers.validators
 
-import api.models.domain.{Nino, TaxYear}
-import api.models.errors._
-import config.MockAppConfig
+import common.errors.{CustomerRefFormatError, EventFormatError}
+import config.MockInsuranceAppConfig
 import play.api.libs.json.{JsValue, Json}
-import support.UnitSpec
+import shared.config.MockSharedAppConfig
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.utils.UnitSpec
 import v1.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRequestBody, AmendInsurancePoliciesRequestData}
 
-class AmendInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockAppConfig {
+class AmendInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockSharedAppConfig with MockInsuranceAppConfig {
   private implicit val correlationId: String = "1234"
 
   private val validNino    = "AA123456A"
@@ -399,13 +401,13 @@ class AmendInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockAppCo
 
   private val parsedValidRequestBody = validRequestBodyJson.as[AmendInsurancePoliciesRequestBody]
 
-  private val validatorFactory = new AmendInsurancePoliciesValidatorFactory(mockAppConfig)
+  private val validatorFactory = new AmendInsurancePoliciesValidatorFactory(mockInsuranceAppConfig)
 
   private def validator(nino: String, taxYear: String, body: JsValue) =
     validatorFactory.validator(nino, taxYear, body)
 
-  MockedAppConfig.minimumPermittedTaxYear
-    .returns(2021)
+  MockedInsuranceAppConfig.minimumPermittedTaxYear
+    .returns(TaxYear.ending(2021))
     .anyNumberOfTimes()
 
   "validator" should {

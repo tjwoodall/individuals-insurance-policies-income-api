@@ -16,22 +16,21 @@
 
 package v1.controllers.validators
 
-import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveNino, ResolveTaxYearMinimum}
-import api.models.domain.TaxYear
-import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits._
-import config.AppConfig
+import config.InsuranceAppConfig
+import shared.controllers.validators.Validator
+import shared.controllers.validators.resolvers.{ResolveNino, ResolveTaxYearMinimum}
+import shared.models.errors.MtdError
 import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RetrieveInsurancePoliciesValidatorFactory @Inject() (appConfig: AppConfig) {
+class RetrieveInsurancePoliciesValidatorFactory @Inject()(appConfig: InsuranceAppConfig) {
 
   private lazy val minimumTaxYear = appConfig.minimumPermittedTaxYear
-  private lazy val resolveTaxYear = ResolveTaxYearMinimum(TaxYear.fromDownstreamInt(minimumTaxYear))
+  private lazy val resolveTaxYear = ResolveTaxYearMinimum(minimumTaxYear)
 
   def validator(nino: String, taxYear: String): Validator[RetrieveInsurancePoliciesRequestData] =
     new Validator[RetrieveInsurancePoliciesRequestData] {

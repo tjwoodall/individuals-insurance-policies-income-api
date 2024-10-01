@@ -16,19 +16,19 @@
 
 package v1.controllers
 
-import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
-import api.models.domain.{Nino, TaxYear}
-import api.models.errors._
-import api.models.outcomes.ResponseWrapper
-import api.services.MockAuditService
-import config.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
+import shared.config.MockSharedAppConfig
+import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
+import shared.services.MockAuditService
 import v1.controllers.validators.MockDeleteInsurancePoliciesValidatorFactory
-import v1.mocks.services.MockDeleteInsurancePoliciesService
 import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
+import v1.services.MockDeleteInsurancePoliciesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ class DeleteInsurancePoliciesControllerSpec
     with MockDeleteInsurancePoliciesService
     with MockDeleteInsurancePoliciesValidatorFactory
     with MockAuditService
-    with MockAppConfig {
+      with MockSharedAppConfig {
 
   val taxYear: String = "2019-20"
 
@@ -56,11 +56,11 @@ class DeleteInsurancePoliciesControllerSpec
         MockDeleteInsurancePoliciesService
           .deleteInsurancePoliciesService(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> false
         )
 
-        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+        MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runOkTestWithAudit(expectedStatus = NO_CONTENT)
       }
@@ -70,11 +70,11 @@ class DeleteInsurancePoliciesControllerSpec
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> false
         )
 
-        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+        MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runErrorTestWithAudit(NinoFormatError)
       }
@@ -85,11 +85,11 @@ class DeleteInsurancePoliciesControllerSpec
         MockDeleteInsurancePoliciesService
           .deleteInsurancePoliciesService(requestData)
           .returns(Future.successful(Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))))
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> false
         )
 
-        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+        MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runErrorTestWithAudit(RuleTaxYearNotSupportedError)
       }

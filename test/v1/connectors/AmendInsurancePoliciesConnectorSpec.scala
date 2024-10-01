@@ -16,9 +16,9 @@
 
 package v1.connectors
 
-import api.connectors.ConnectorSpec
-import api.models.domain.{Nino, TaxYear}
-import api.models.outcomes.ResponseWrapper
+import shared.connectors.ConnectorSpec
+import shared.models.domain.{Nino, TaxYear}
+import shared.models.outcomes.ResponseWrapper
 import v1.models.request.amendInsurancePolicies._
 
 import scala.concurrent.Future
@@ -92,7 +92,7 @@ class AmendInsurancePoliciesConnectorSpec extends ConnectorSpec {
 
     val connector: AmendInsurancePoliciesConnector = new AmendInsurancePoliciesConnector(
       http = mockHttpClient,
-      appConfig = mockAppConfig
+      appConfig = mockSharedAppConfig
     )
 
   }

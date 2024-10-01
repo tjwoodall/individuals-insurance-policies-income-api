@@ -16,10 +16,10 @@
 
 package v1.services
 
-import api.controllers.RequestContext
-import api.models.errors._
-import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
+import shared.controllers.RequestContext
+import shared.models.errors._
+import shared.services.{BaseService, ServiceOutcome}
 import v1.connectors.RetrieveInsurancePoliciesConnector
 import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
@@ -35,7 +35,6 @@ class RetrieveInsurancePoliciesService @Inject() (connector: RetrieveInsurancePo
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveInsurancePoliciesResponse]] = {
 
     connector.retrieveInsurancePolicies(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
-
   }
 
   private val downstreamErrorMap: Map[String, MtdError] = {

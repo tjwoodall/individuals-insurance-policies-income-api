@@ -16,19 +16,19 @@
 
 package v1.endpoints
 
-import api.models.errors._
-import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import common.support.InsuranceBaseISpec
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import support.IntegrationBaseSpec
+import shared.models.errors._
+import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import v1.fixtures.RetrieveInsurancePoliciesControllerFixture
 import v1.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
 
-class RetrieveInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
+class RetrieveInsurancePoliciesControllerISpec extends InsuranceBaseISpec {
 
   "Calling the 'retrieve insurance policies' endpoint" should {
     "return a 200 status code" when {
@@ -147,7 +147,7 @@ class RetrieveInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
 
     val downstreamResponse: JsValue = RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
 
-    def uri: String = s"/$nino/$taxYear"
+    private def uri: String = s"/$nino/$taxYear"
 
     def setupStubs(): StubMapping
 
@@ -156,7 +156,7 @@ class RetrieveInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
       buildRequest(uri)
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.1.0+json"),
-          (AUTHORIZATION, "Bearer 123") // some bearer token
+          (AUTHORIZATION, "Bearer 123")
         )
     }
 

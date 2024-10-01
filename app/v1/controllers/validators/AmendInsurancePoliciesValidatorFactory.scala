@@ -16,24 +16,23 @@
 
 package v1.controllers.validators
 
-import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveNino, ResolveNonEmptyJsonObject, ResolveTaxYearMinimum}
-import api.models.domain.TaxYear
-import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits._
-import config.AppConfig
+import config.InsuranceAppConfig
 import play.api.libs.json.JsValue
+import shared.controllers.validators.Validator
+import shared.controllers.validators.resolvers.{ResolveNino, ResolveNonEmptyJsonObject, ResolveTaxYearMinimum}
+import shared.models.errors.MtdError
 import v1.controllers.validators.AmendInsurancePoliciesRulesValidator.validateBusinessRules
 import v1.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRequestBody, AmendInsurancePoliciesRequestData}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AmendInsurancePoliciesValidatorFactory @Inject() (appConfig: AppConfig) {
+class AmendInsurancePoliciesValidatorFactory @Inject()(appConfig: InsuranceAppConfig) {
 
   private lazy val minimumTaxYear = appConfig.minimumPermittedTaxYear
-  private lazy val resolveTaxYear = ResolveTaxYearMinimum(TaxYear.fromDownstreamInt(minimumTaxYear))
+  private lazy val resolveTaxYear = ResolveTaxYearMinimum(minimumTaxYear)
   private val resolveJson         = new ResolveNonEmptyJsonObject[AmendInsurancePoliciesRequestBody]()
 
   def validator(nino: String, taxYear: String, body: JsValue): Validator[AmendInsurancePoliciesRequestData] =

@@ -17,7 +17,7 @@
 package v1.models.request.amendInsurancePolicies
 
 import play.api.libs.json.{JsError, JsObject, Json}
-import support.UnitSpec
+import shared.utils.UnitSpec
 
 class AmendInsurancePoliciesRequestBodySpec extends UnitSpec {
 

@@ -16,18 +16,18 @@
 
 package v1.controllers
 
-import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.models.domain.{Nino, TaxYear, Timestamp}
-import api.models.errors._
-import api.models.outcomes.ResponseWrapper
-import config.MockAppConfig
 import play.api.Configuration
 import play.api.mvc.Result
+import shared.config.MockSharedAppConfig
+import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import shared.models.domain.{Nino, TaxYear, Timestamp}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
 import v1.controllers.validators.MockRetrieveInsurancePoliciesValidatorFactory
 import v1.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
-import v1.mocks.services.MockRetrieveInsurancePoliciesService
 import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies._
+import v1.services.MockRetrieveInsurancePoliciesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -37,7 +37,7 @@ class RetrieveInsurancePoliciesControllerSpec
     with ControllerTestRunner
     with MockRetrieveInsurancePoliciesService
     with MockRetrieveInsurancePoliciesValidatorFactory
-    with MockAppConfig {
+      with MockSharedAppConfig {
 
   val taxYear: String = "2019-20"
 
@@ -111,11 +111,11 @@ class RetrieveInsurancePoliciesControllerSpec
         MockRetrieveInsurancePoliciesService
           .retrieve(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, retrieveInsurancePoliciesResponseModel))))
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> false
         )
 
-        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+        MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runOkTest(expectedStatus = OK, maybeExpectedResponseBody = Some(mtdResponse))
       }
@@ -125,11 +125,11 @@ class RetrieveInsurancePoliciesControllerSpec
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> false
         )
 
-        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+        MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runErrorTest(NinoFormatError)
       }
@@ -141,11 +141,11 @@ class RetrieveInsurancePoliciesControllerSpec
           .retrieve(requestData)
           .returns(Future.successful(Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))))
 
-        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+        MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> false
         )
 
-        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+        MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
         runErrorTest(RuleTaxYearNotSupportedError)
       }
     }

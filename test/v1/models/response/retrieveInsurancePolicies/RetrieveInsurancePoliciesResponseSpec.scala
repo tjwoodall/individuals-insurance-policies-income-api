@@ -16,9 +16,9 @@
 
 package v1.models.response.retrieveInsurancePolicies
 
-import api.models.domain.Timestamp
 import play.api.libs.json.{JsError, Json}
-import support.UnitSpec
+import shared.models.domain.Timestamp
+import shared.utils.UnitSpec
 
 class RetrieveInsurancePoliciesResponseSpec extends UnitSpec {
 

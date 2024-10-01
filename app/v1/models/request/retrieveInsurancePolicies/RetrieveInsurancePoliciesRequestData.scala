@@ -16,6 +16,6 @@
 
 package v1.models.request.retrieveInsurancePolicies
 
-import api.models.domain.{Nino, TaxYear}
+import shared.models.domain.{Nino, TaxYear}
 
 case class RetrieveInsurancePoliciesRequestData(nino: Nino, taxYear: TaxYear)

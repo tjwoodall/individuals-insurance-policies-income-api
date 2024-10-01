@@ -16,13 +16,13 @@
 
 package v1.controllers
 
-import api.controllers._
-import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import config.AppConfig
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
-import routing.Version1
-import utils.IdGenerator
+import shared.config.SharedAppConfig
+import shared.controllers._
+import shared.routing.Version1
+import shared.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import shared.utils.IdGenerator
 import v1.controllers.validators.AmendInsurancePoliciesValidatorFactory
 import v1.services.AmendInsurancePoliciesService
 
@@ -30,13 +30,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AmendInsurancePoliciesController @Inject() (val authService: EnrolmentsAuthService,
+class AmendInsurancePoliciesController @Inject()(
+                                                  val authService: EnrolmentsAuthService,
                                                   val lookupService: MtdIdLookupService,
                                                   validatorFactory: AmendInsurancePoliciesValidatorFactory,
                                                   service: AmendInsurancePoliciesService,
                                                   auditService: AuditService,
                                                   cc: ControllerComponents,
-                                                  val idGenerator: IdGenerator)(implicit ec: ExecutionContext, appConfig: AppConfig)
+                                                  val idGenerator: IdGenerator
+                                                )(implicit ec: ExecutionContext, appConfig: SharedAppConfig)
     extends AuthorisedController(cc) {
 
   val endpointName: String = "amend-insurance-policies"

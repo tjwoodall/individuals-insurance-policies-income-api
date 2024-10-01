@@ -16,12 +16,12 @@
 
 package v1.services
 
-import api.controllers.EndpointLogContext
-import api.models.domain.{Nino, TaxYear, Timestamp}
-import api.models.errors._
-import api.models.outcomes.ResponseWrapper
-import api.services.ServiceSpec
-import v1.mocks.connectors.MockRetrieveInsurancePoliciesConnector
+import shared.controllers.EndpointLogContext
+import shared.models.domain.{Nino, TaxYear, Timestamp}
+import shared.models.errors._
+import shared.models.outcomes.ResponseWrapper
+import shared.services.ServiceSpec
+import v1.connectors.MockRetrieveInsurancePoliciesConnector
 import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
 

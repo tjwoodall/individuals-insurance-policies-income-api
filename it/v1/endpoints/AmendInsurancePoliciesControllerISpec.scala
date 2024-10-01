@@ -16,18 +16,19 @@
 
 package v1.endpoints
 
-import api.models.errors
-import api.models.errors._
-import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import common.errors.{CustomerRefFormatError, EventFormatError}
+import common.support.InsuranceBaseISpec
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import support.IntegrationBaseSpec
+import shared.models.errors
+import shared.models.errors._
+import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class AmendInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
+class AmendInsurancePoliciesControllerISpec extends InsuranceBaseISpec {
 
   private trait Test {
 
@@ -144,7 +145,7 @@ class AmendInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
       buildRequest(uri)
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.1.0+json"),
-          (AUTHORIZATION, "Bearer 123") // some bearer token
+          (AUTHORIZATION, "Bearer 123")
         )
     }
 

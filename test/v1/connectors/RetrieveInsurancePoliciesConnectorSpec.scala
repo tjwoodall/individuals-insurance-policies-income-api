@@ -16,15 +16,16 @@
 
 package v1.connectors
 
-import api.connectors.ConnectorSpec
-import api.models.domain.{Nino, TaxYear, Timestamp}
-import api.models.outcomes.ResponseWrapper
+import common.connectors.InsuranceConnectorSpec
+import config.MockInsuranceAppConfig
+import shared.models.domain.{Nino, TaxYear, Timestamp}
+import shared.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
 
 import scala.concurrent.Future
 
-class RetrieveInsurancePoliciesConnectorSpec extends ConnectorSpec {
+class RetrieveInsurancePoliciesConnectorSpec extends InsuranceConnectorSpec {
 
   "RetrieveInsurancePoliciesConnector" should {
     "return the expected response for a non-TYS request" when {
@@ -39,6 +40,7 @@ class RetrieveInsurancePoliciesConnectorSpec extends ConnectorSpec {
         await(connector.retrieveInsurancePolicies(request)) shouldBe outcome
       }
     }
+
     "return the expected response for a TYS request" when {
       "a valid request is made" in new TysIfsTest with Test {
         def taxYear: TaxYear = TaxYear.fromMtd("2023-24")
@@ -53,7 +55,7 @@ class RetrieveInsurancePoliciesConnectorSpec extends ConnectorSpec {
     }
   }
 
-  trait Test {
+  trait Test extends MockInsuranceAppConfig {
     _: ConnectorTest =>
 
     def taxYear: TaxYear
@@ -77,7 +79,8 @@ class RetrieveInsurancePoliciesConnectorSpec extends ConnectorSpec {
 
     val connector: RetrieveInsurancePoliciesConnector = new RetrieveInsurancePoliciesConnector(
       http = mockHttpClient,
-      appConfig = mockAppConfig
+      appConfig = mockSharedAppConfig,
+      insuranceConfig = mockInsuranceAppConfig
     )
 
   }

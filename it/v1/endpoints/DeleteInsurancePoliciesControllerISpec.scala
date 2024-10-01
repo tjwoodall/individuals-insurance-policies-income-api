@@ -16,16 +16,16 @@
 
 package v1.endpoints
 
-import api.models.errors._
-import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
+import common.support.InsuranceBaseISpec
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import support.IntegrationBaseSpec
+import shared.models.errors._
+import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
-class DeleteInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
+class DeleteInsurancePoliciesControllerISpec extends InsuranceBaseISpec {
 
   "Calling the 'delete insurance-policies' endpoint" should {
     "return a 204 status code" when {
@@ -122,8 +122,9 @@ class DeleteInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino: String   = "AA123456A"
-    def mtdUri: String = s"/$nino/$taxYear"
+    val nino: String = "AA123456A"
+
+    private def mtdUri: String = s"/$nino/$taxYear"
 
     def taxYear: String
     def downstreamUri: String
@@ -138,7 +139,7 @@ class DeleteInsurancePoliciesControllerISpec extends IntegrationBaseSpec {
       buildRequest(mtdUri)
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.1.0+json"),
-          (AUTHORIZATION, "Bearer 123") // some bearer token
+          (AUTHORIZATION, "Bearer 123")
         )
     }
 

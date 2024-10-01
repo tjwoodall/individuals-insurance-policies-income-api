@@ -16,10 +16,11 @@
 
 package v1.connectors
 
-import api.connectors.DownstreamUri.{Api1661Uri, TaxYearSpecificIfsUri}
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
-import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
-import config.AppConfig
+import config.InsuranceAppConfig
+import shared.config.SharedAppConfig
+import shared.connectors.DownstreamUri.TaxYearSpecificIfsUri
+import shared.connectors.httpparsers.StandardDownstreamHttpParser._
+import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome, DownstreamStrategy, DownstreamUri}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
@@ -28,7 +29,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveInsurancePoliciesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
+class RetrieveInsurancePoliciesConnector @Inject()(
+                                                    val http: HttpClient,
+                                                    val appConfig: SharedAppConfig,
+                                                    insuranceConfig: InsuranceAppConfig
+                                                  ) extends BaseDownstreamConnector {
 
   def retrieveInsurancePolicies(request: RetrieveInsurancePoliciesRequestData)(implicit
       hc: HeaderCarrier,
@@ -42,9 +47,11 @@ class RetrieveInsurancePoliciesConnector @Inject() (val http: HttpClient, val ap
         s"income-tax/insurance-policies/income/${taxYear.asTysDownstream}/${nino.value}"
       )
     } else {
-      Api1661Uri[RetrieveInsurancePoliciesResponse](
-        s"income-tax/insurance-policies/income/${nino.value}/${taxYear.asMtd}"
+      DownstreamUri[RetrieveInsurancePoliciesResponse](
+        s"income-tax/insurance-policies/income/${nino.value}/${taxYear.asMtd}",
+        DownstreamStrategy.standardStrategy(insuranceConfig.api1661DownstreamConfig)
       )
+
     }
 
     get(uri = downstreamUri)

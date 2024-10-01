@@ -16,11 +16,12 @@
 
 package v1.controllers.validators
 
-import api.controllers.validators.RulesValidator
-import api.controllers.validators.resolvers.{ResolveInteger, ResolveParsedNumber, ResolveStringPattern}
-import api.models.errors.{CustomerRefFormatError, EventFormatError, MtdError}
 import cats.data.Validated
 import cats.implicits._
+import common.errors.{CustomerRefFormatError, EventFormatError}
+import shared.controllers.validators.RulesValidator
+import shared.controllers.validators.resolvers.{ResolveInteger, ResolveParsedNumber, ResolveStringPattern}
+import shared.models.errors.MtdError
 import v1.models.request.amendInsurancePolicies.{AmendCommonInsurancePoliciesItem, AmendForeignPoliciesItem, AmendInsurancePoliciesRequestData, AmendVoidedIsaPoliciesItem}
 
 object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsurancePoliciesRequestData] {
