@@ -4,6 +4,11 @@ info:
   version: "1.0"
   title: Individuals Insurance Policies Income (MTD)
   description: |
+    The following endpoints are stateful in the Sandbox:
+    * Retrieve Insurance Policies Income
+    * Create and Amend Insurance Policies Income
+    * Delete Insurance Policies Income
+    
     # Send fraud prevention data
     HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
     
