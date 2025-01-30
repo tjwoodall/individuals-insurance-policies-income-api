@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,8 @@
  * limitations under the License.
  */
 
-package routing
+package v2.models.request.deleteInsurancePolicies
 
-import play.api.routing.Router
-import shared.config.SharedAppConfig
-import shared.routing._
+import shared.models.domain.{Nino, TaxYear}
 
-import javax.inject.{Inject, Singleton}
-
-@Singleton case class InsuranceVersionRoutingMap @Inject() (
-    appConfig: SharedAppConfig,
-    defaultRouter: Router,
-    v1Router: v1.Routes,
-    v2Router: v2.Routes
-) extends VersionRoutingMap {
-
-  val map: Map[Version, Router] = Map(
-    Version1 -> v1Router,
-    Version2 -> v2Router
-  )
-
-}
+case class DeleteInsurancePoliciesRequestData(nino: Nino, taxYear: TaxYear)
