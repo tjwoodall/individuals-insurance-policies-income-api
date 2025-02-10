@@ -16,6 +16,7 @@
 
 package v2.services
 
+import common.errors.RuleOutsideAmendmentWindowError
 import shared.controllers.EndpointLogContext
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.errors._
@@ -75,8 +76,9 @@ class DeleteInsurancePoliciesServiceSpec extends ServiceSpec {
         )
 
         val extraTysErrors = List(
-          "INVALID_CORRELATION_ID" -> InternalError,
-          "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError
+          "INVALID_CORRELATION_ID"    -> InternalError,
+          "TAX_YEAR_NOT_SUPPORTED"    -> RuleTaxYearNotSupportedError,
+          "OUTSIDE_AMENDMENT_WINDOW"  -> RuleOutsideAmendmentWindowError
         )
 
         (errors ++ extraTysErrors).foreach(args => (serviceError _).tupled(args))
