@@ -64,8 +64,7 @@ class AmendInsurancePoliciesController @Inject()(
           transactionName = "create-amend-insurance-policies",
           apiVersion = Version1,
           params = Map("nino" -> nino, "taxYear" -> taxYear),
-          requestBody = Some(request.body),
-          includeResponse = true
+          requestBody = Some(request.body)
         ))
         .withNoContentResult(successStatus = OK)
 
