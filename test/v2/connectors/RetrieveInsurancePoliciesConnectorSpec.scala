@@ -20,6 +20,7 @@ import common.connectors.InsuranceConnectorSpec
 import config.MockInsuranceAppConfig
 import shared.models.domain.{Nino, TaxYear, Timestamp}
 import shared.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v2.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v2.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
 
@@ -34,7 +35,7 @@ class RetrieveInsurancePoliciesConnectorSpec extends InsuranceConnectorSpec {
         val outcome          = Right(ResponseWrapper(correlationId, response))
 
         willGet(
-          url = s"$baseUrl/income-tax/insurance-policies/income/$nino/2019-20"
+          url"$baseUrl/income-tax/insurance-policies/income/$nino/2019-20"
         ).returns(Future.successful(outcome))
 
         await(connector.retrieveInsurancePolicies(request)) shouldBe outcome
@@ -47,7 +48,7 @@ class RetrieveInsurancePoliciesConnectorSpec extends InsuranceConnectorSpec {
         val outcome          = Right(ResponseWrapper(correlationId, response))
 
         willGet(
-          url = s"$baseUrl/income-tax/insurance-policies/income/23-24/$nino"
+          url"$baseUrl/income-tax/insurance-policies/income/23-24/$nino"
         ).returns(Future.successful(outcome))
 
         await(connector.retrieveInsurancePolicies(request)) shouldBe outcome

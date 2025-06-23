@@ -20,11 +20,12 @@ import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.controllers.validators.Validator
 import shared.models.errors.MtdError
 import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
-trait MockDeleteInsurancePoliciesValidatorFactory extends MockFactory {
+trait MockDeleteInsurancePoliciesValidatorFactory extends TestSuite with MockFactory {
 
   val mockDeleteInsurancePoliciesValidatorFactory: DeleteInsurancePoliciesValidatorFactory =
     mock[DeleteInsurancePoliciesValidatorFactory]

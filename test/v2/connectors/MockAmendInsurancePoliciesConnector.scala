@@ -18,13 +18,14 @@ package v2.connectors
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.connectors.DownstreamOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 import v2.models.request.amendInsurancePolicies.AmendInsurancePoliciesRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAmendInsurancePoliciesConnector extends MockFactory {
+trait MockAmendInsurancePoliciesConnector extends TestSuite with MockFactory {
 
   val mockAmendInsurancePoliciesConnector: AmendInsurancePoliciesConnector = mock[AmendInsurancePoliciesConnector]
 

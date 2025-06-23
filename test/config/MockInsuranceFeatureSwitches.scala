@@ -18,8 +18,9 @@ package config
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 
-trait MockInsuranceFeatureSwitches extends MockFactory {
+trait MockInsuranceFeatureSwitches extends TestSuite with MockFactory {
 
   implicit val mockFeatureSwitches: InsuranceFeatureSwitches = mock[InsuranceFeatureSwitches]
 

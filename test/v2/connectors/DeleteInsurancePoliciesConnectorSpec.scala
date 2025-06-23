@@ -20,6 +20,7 @@ import shared.connectors.ConnectorSpec
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.errors.{InternalError, NinoFormatError}
 import shared.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v2.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
 import scala.concurrent.Future
@@ -50,7 +51,7 @@ class DeleteInsurancePoliciesConnectorSpec extends ConnectorSpec {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
         willDelete(
-          s"$baseUrl/income-tax/insurance-policies/income/$nino/${taxYear.asMtd}"
+          url"$baseUrl/income-tax/insurance-policies/income/$nino/${taxYear.asMtd}"
         ).returns(Future.successful(outcome))
 
         await(connector.deleteInsurancePolicies(request)) shouldBe outcome
@@ -62,7 +63,7 @@ class DeleteInsurancePoliciesConnectorSpec extends ConnectorSpec {
         val outcome = Left(ResponseWrapper(correlationId, NinoFormatError))
 
         willDelete(
-          s"$baseUrl/income-tax/insurance-policies/income/$nino/${taxYear.asMtd}"
+          url"$baseUrl/income-tax/insurance-policies/income/$nino/${taxYear.asMtd}"
         ).returns(Future.successful(outcome))
 
         await(connector.deleteInsurancePolicies(request)) shouldBe outcome
@@ -75,7 +76,7 @@ class DeleteInsurancePoliciesConnectorSpec extends ConnectorSpec {
         val outcome = Left(ResponseWrapper(correlationId, Seq(NinoFormatError, InternalError)))
 
         willDelete(
-          s"$baseUrl/income-tax/insurance-policies/income/$nino/${taxYear.asMtd}"
+          url"$baseUrl/income-tax/insurance-policies/income/$nino/${taxYear.asMtd}"
         ).returns(Future.successful(outcome))
 
         await(connector.deleteInsurancePolicies(request)) shouldBe outcome
@@ -89,7 +90,7 @@ class DeleteInsurancePoliciesConnectorSpec extends ConnectorSpec {
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
         willDelete(
-          s"$baseUrl/income-tax/insurance-policies/income/${taxYear.asTysDownstream}/$nino"
+          url"$baseUrl/income-tax/insurance-policies/income/${taxYear.asTysDownstream}/$nino"
         ).returns(Future.successful(outcome))
 
         await(connector.deleteInsurancePolicies(request)) shouldBe outcome

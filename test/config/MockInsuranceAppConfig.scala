@@ -18,10 +18,11 @@ package config
 
 import org.scalamock.handlers.CallHandler0
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.config.DownstreamConfig
 import shared.models.domain.TaxYear
 
-trait MockInsuranceAppConfig extends MockFactory {
+trait MockInsuranceAppConfig extends TestSuite with MockFactory {
 
   implicit val mockInsuranceAppConfig: InsuranceAppConfig = mock[InsuranceAppConfig]
 

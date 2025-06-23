@@ -19,6 +19,7 @@ package v1.connectors
 import shared.connectors.ConnectorSpec
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v1.models.request.amendInsurancePolicies._
 
 import scala.concurrent.Future
@@ -103,7 +104,7 @@ class AmendInsurancePoliciesConnectorSpec extends ConnectorSpec {
         val outcome = Right(ResponseWrapper(correlationId, ()))
         val taxYear = TaxYear.fromMtd("2019-20")
 
-        willPut(s"$baseUrl/income-tax/insurance-policies/income/$nino/2019-20", amendInsurancePoliciesBody) returns Future
+        willPut(url"$baseUrl/income-tax/insurance-policies/income/$nino/2019-20", amendInsurancePoliciesBody) returns Future
           .successful(outcome)
 
         val result = await(connector.amendInsurancePolicies(request))
@@ -117,7 +118,7 @@ class AmendInsurancePoliciesConnectorSpec extends ConnectorSpec {
         val taxYear = TaxYear.fromMtd("2023-24")
         val outcome = Right(ResponseWrapper(correlationId, ()))
 
-        willPut(s"$baseUrl/income-tax/insurance-policies/income/23-24/${nino}", amendInsurancePoliciesBody) returns Future
+        willPut(url"$baseUrl/income-tax/insurance-policies/income/23-24/${nino}", amendInsurancePoliciesBody) returns Future
           .successful(outcome)
 
         val result = await(connector.amendInsurancePolicies(request))

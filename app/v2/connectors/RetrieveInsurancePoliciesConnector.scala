@@ -21,7 +21,8 @@ import shared.config.SharedAppConfig
 import shared.connectors.DownstreamUri.TaxYearSpecificIfsUri
 import shared.connectors.httpparsers.StandardDownstreamHttpParser._
 import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome, DownstreamStrategy, DownstreamUri}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.HeaderCarrier
 import v2.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v2.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
 
@@ -30,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RetrieveInsurancePoliciesConnector @Inject()(
-                                                    val http: HttpClient,
+                                                    val http: HttpClientV2,
                                                     val appConfig: SharedAppConfig,
                                                     insuranceConfig: InsuranceAppConfig
                                                   ) extends BaseDownstreamConnector {

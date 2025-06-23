@@ -18,6 +18,7 @@ package v1.services
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import shared.controllers.RequestContext
 import shared.services.ServiceOutcome
 import v1.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
@@ -25,7 +26,7 @@ import v1.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesRes
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockRetrieveInsurancePoliciesService extends MockFactory {
+trait MockRetrieveInsurancePoliciesService extends TestSuite with MockFactory {
 
   val mockRetrieveInsurancePoliciesService: RetrieveInsurancePoliciesService =
     mock[RetrieveInsurancePoliciesService]
