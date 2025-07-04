@@ -18,7 +18,7 @@ package v2.connectors
 
 import config.InsuranceAppConfig
 import shared.config.SharedAppConfig
-import shared.connectors.DownstreamUri.TaxYearSpecificIfsUri
+import shared.connectors.DownstreamUri.IfsUri
 import shared.connectors.httpparsers.StandardDownstreamHttpParser._
 import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome, DownstreamStrategy, DownstreamUri}
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -44,7 +44,7 @@ class RetrieveInsurancePoliciesConnector @Inject()(
     import request._
 
     val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[RetrieveInsurancePoliciesResponse](
+      IfsUri[RetrieveInsurancePoliciesResponse](
         s"income-tax/insurance-policies/income/${taxYear.asTysDownstream}/${nino.value}"
       )
     } else {

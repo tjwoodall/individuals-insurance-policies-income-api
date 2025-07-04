@@ -114,7 +114,7 @@ class AmendInsurancePoliciesConnectorSpec extends ConnectorSpec {
     }
 
     "amendInsurancePolicies called for a TYS tax year" must {
-      "return a 201 status for a success scenario" in new TysIfsTest with Test {
+      "return a 201 status for a success scenario" in new IfsTest with Test {
         val taxYear = TaxYear.fromMtd("2023-24")
         val outcome = Right(ResponseWrapper(correlationId, ()))
 

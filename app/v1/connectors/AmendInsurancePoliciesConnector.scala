@@ -18,7 +18,7 @@ package v1.connectors
 
 import play.api.http.Status
 import shared.config.SharedAppConfig
-import shared.connectors.DownstreamUri.{IfsUri, TaxYearSpecificIfsUri}
+import shared.connectors.DownstreamUri.IfsUri
 import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.HeaderCarrier
@@ -43,7 +43,7 @@ class AmendInsurancePoliciesConnector @Inject()(val http: HttpClientV2, val appC
     val taxYear = request.taxYear
 
     val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
-      TaxYearSpecificIfsUri[Unit](s"income-tax/insurance-policies/income/${taxYear.asTysDownstream}/${nino}")
+      IfsUri[Unit](s"income-tax/insurance-policies/income/${taxYear.asTysDownstream}/${nino}")
     } else {
       IfsUri[Unit](s"income-tax/insurance-policies/income/$nino/${taxYear.asMtd}")
     }
