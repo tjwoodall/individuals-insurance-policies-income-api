@@ -67,7 +67,7 @@ abstract class AuthorisedController(
 
     override def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] = {
 
-      implicit val headerCarrier: HeaderCarrier = hc(request)
+      given HeaderCarrier = hc(request)
 
       lookupService.lookup(nino).flatMap[Result] {
         case Right(mtdId) =>

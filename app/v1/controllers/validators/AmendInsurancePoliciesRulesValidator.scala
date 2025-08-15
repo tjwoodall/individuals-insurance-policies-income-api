@@ -22,7 +22,12 @@ import common.errors.{CustomerRefFormatError, EventFormatError}
 import shared.controllers.validators.RulesValidator
 import shared.controllers.validators.resolvers.{ResolveInteger, ResolveParsedNumber, ResolveStringPattern}
 import shared.models.errors.MtdError
-import v1.models.request.amendInsurancePolicies.{AmendCommonInsurancePoliciesItem, AmendForeignPoliciesItem, AmendInsurancePoliciesRequestData, AmendVoidedIsaPoliciesItem}
+import v1.models.request.amendInsurancePolicies.{
+  AmendCommonInsurancePoliciesItem,
+  AmendForeignPoliciesItem,
+  AmendInsurancePoliciesRequestData,
+  AmendVoidedIsaPoliciesItem
+}
 
 object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsurancePoliciesRequestData] {
 

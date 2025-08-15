@@ -27,7 +27,7 @@ import v1.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestD
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DeleteInsurancePoliciesValidatorFactory @Inject()(appConfig: InsuranceAppConfig) {
+class DeleteInsurancePoliciesValidatorFactory @Inject() (appConfig: InsuranceAppConfig) {
 
   private lazy val minimumTaxYear = appConfig.minimumPermittedTaxYear
   private lazy val resolveTaxYear = ResolveTaxYearMinimum(minimumTaxYear)
@@ -39,7 +39,7 @@ class DeleteInsurancePoliciesValidatorFactory @Inject()(appConfig: InsuranceAppC
         (
           ResolveNino(nino),
           resolveTaxYear(taxYear)
-        ).mapN(DeleteInsurancePoliciesRequestData)
+        ).mapN(DeleteInsurancePoliciesRequestData.apply)
 
     }
 

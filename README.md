@@ -8,9 +8,9 @@ The Insurance Policies Income API allows a developer to:
 
 ## Requirements
 
-- Scala 2.13.x
+- Scala 3.x.x
 - Java 11
-- sbt 1.9.7
+- sbt 1.10.x
 - [Service Manager V2](https://github.com/hmrc/sm2)
 
 ## Running the micro-service
@@ -23,7 +23,7 @@ Start the service manager profile: `sm2 --start MTDFB_INDIVIDUALS_INSURANCE_POLI
 
 ```
 sbt test
-sbt it:test
+sbt it/test
 ```
 
 ## Viewing Open API Spec (OAS) docs

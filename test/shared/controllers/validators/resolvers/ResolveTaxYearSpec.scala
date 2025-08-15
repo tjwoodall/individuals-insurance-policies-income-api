@@ -18,8 +18,9 @@ package shared.controllers.validators.resolvers
 
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
+import play.api.http.Status.BAD_REQUEST
 import shared.models.domain.TaxYear
-import shared.models.errors._
+import shared.models.errors.*
 import shared.utils.UnitSpec
 
 import java.time.{Clock, LocalDate, ZoneOffset}
@@ -202,6 +203,7 @@ class ResolveTaxYearSpec extends UnitSpec with ResolverSupport {
 
     "return the expected error" when {
       val resolver = ResolveTaxYearMinMax(minimumTaxYear -> maximumTaxYear, minError = BadRequestError, maxError = InvalidTaxYearParameterError)
+      val resolverWithDefaultError = ResolveTaxYearMinMax(minimumTaxYear -> maximumTaxYear, MtdError("CODE", "some message", BAD_REQUEST))
 
       "given a tax year earlier than the minimum and a non-default MtdError" in {
         val result: Validated[Seq[MtdError], TaxYear] = resolver("2020-21")
@@ -211,6 +213,16 @@ class ResolveTaxYearSpec extends UnitSpec with ResolverSupport {
       "given a tax year later than the maximum and a non-default MtdError" in {
         val result: Validated[Seq[MtdError], TaxYear] = resolver("2025-26")
         result shouldBe Invalid(List(InvalidTaxYearParameterError))
+      }
+
+      "given a tax year earlier than the minimum and a default MtdError" in {
+        val result: Validated[Seq[MtdError], TaxYear] = resolverWithDefaultError("2020-21")
+        result shouldBe Invalid(List(MtdError("CODE", "some message", BAD_REQUEST)))
+      }
+
+      "given a tax year later than the maximum and a default MtdError" in {
+        val result: Validated[Seq[MtdError], TaxYear] = resolverWithDefaultError("2025-26")
+        result shouldBe Invalid(List(MtdError("CODE", "some message", BAD_REQUEST)))
       }
     }
 

@@ -27,7 +27,7 @@ import v2.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequ
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RetrieveInsurancePoliciesValidatorFactory @Inject()(appConfig: InsuranceAppConfig) {
+class RetrieveInsurancePoliciesValidatorFactory @Inject() (appConfig: InsuranceAppConfig) {
 
   private lazy val minimumTaxYear = appConfig.minimumPermittedTaxYear
   private lazy val resolveTaxYear = ResolveTaxYearMinimum(minimumTaxYear)
@@ -39,7 +39,7 @@ class RetrieveInsurancePoliciesValidatorFactory @Inject()(appConfig: InsuranceAp
         (
           ResolveNino(nino),
           resolveTaxYear(taxYear)
-        ).mapN(RetrieveInsurancePoliciesRequestData)
+        ).mapN(RetrieveInsurancePoliciesRequestData.apply)
 
     }
 

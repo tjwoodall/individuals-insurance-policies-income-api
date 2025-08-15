@@ -16,6 +16,7 @@
 
 package shared.definition
 
+import play.api.libs.json.{JsValue, Json}
 import shared.routing.Version3
 import shared.utils.UnitSpec
 
@@ -24,7 +25,29 @@ class ApiDefinitionSpec extends UnitSpec {
   private val apiVersion: APIVersion       = APIVersion(Version3, APIStatus.ALPHA, endpointsEnabled = true)
   private val apiDefinition: APIDefinition = APIDefinition("b", "c", "d", List("category"), List(apiVersion), Some(false))
 
+  private val apiDefinitionJson: JsValue = Json.parse("""{
+      |"name": "b",
+      |"description": "c",
+      |"context": "d",
+      |"categories": ["category"],
+      |"versions": [{"version":"3.0","status":"ALPHA","endpointsEnabled":true}],
+      |"requiresTrust": false
+      |}""".stripMargin)
+
   "APIDefinition" when {
+
+    "the full model is present" should {
+      "correctly write the model to json" in {
+        Json.toJson(apiDefinition) shouldBe apiDefinitionJson
+      }
+    }
+
+    "the full Json is present" should {
+      "correctly read JSON to a model" in {
+        apiDefinitionJson.as[APIDefinition] shouldBe apiDefinition
+      }
+    }
+
     "the 'name' parameter is empty" should {
       "throw an 'IllegalArgumentException'" in {
         assertThrows[IllegalArgumentException](

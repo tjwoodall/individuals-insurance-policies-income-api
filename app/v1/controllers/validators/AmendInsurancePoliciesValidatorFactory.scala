@@ -29,7 +29,7 @@ import v1.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRequestBo
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AmendInsurancePoliciesValidatorFactory @Inject()(appConfig: InsuranceAppConfig) {
+class AmendInsurancePoliciesValidatorFactory @Inject() (appConfig: InsuranceAppConfig) {
 
   private lazy val minimumTaxYear = appConfig.minimumPermittedTaxYear
   private lazy val resolveTaxYear = ResolveTaxYearMinimum(minimumTaxYear)
@@ -43,7 +43,7 @@ class AmendInsurancePoliciesValidatorFactory @Inject()(appConfig: InsuranceAppCo
           ResolveNino(nino),
           resolveTaxYear(taxYear),
           resolveJson(body)
-        ).mapN(AmendInsurancePoliciesRequestData) andThen validateBusinessRules
+        ).mapN(AmendInsurancePoliciesRequestData.apply) andThen validateBusinessRules
 
     }
 

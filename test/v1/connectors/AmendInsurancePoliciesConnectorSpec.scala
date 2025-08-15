@@ -20,13 +20,13 @@ import shared.connectors.ConnectorSpec
 import shared.models.domain.{Nino, TaxYear}
 import shared.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
-import v1.models.request.amendInsurancePolicies._
+import v1.models.request.amendInsurancePolicies.*
 
 import scala.concurrent.Future
 
 class AmendInsurancePoliciesConnectorSpec extends ConnectorSpec {
 
-  trait Test { _: ConnectorTest =>
+  trait Test { self: ConnectorTest =>
 
     val nino: String = "AA111111A"
     val taxYear: TaxYear

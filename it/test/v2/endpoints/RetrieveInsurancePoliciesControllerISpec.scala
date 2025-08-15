@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package v1.endpoints
+package v2.endpoints
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.support.InsuranceBaseISpec
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import shared.models.errors._
+import shared.models.errors.*
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
-import v1.fixtures.RetrieveInsurancePoliciesControllerFixture
-import v1.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
+import v2.fixtures.RetrieveInsurancePoliciesControllerFixture
+import v2.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
 
 class RetrieveInsurancePoliciesControllerISpec extends InsuranceBaseISpec {
 
@@ -91,7 +91,7 @@ class RetrieveInsurancePoliciesControllerISpec extends InsuranceBaseISpec {
           ("AA123456A", "2015-17", BAD_REQUEST, RuleTaxYearRangeInvalidError),
           ("AA123456A", "2018-19", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
-        input.foreach(args => (validationErrorTest _).tupled(args))
+        input.foreach(args => (validationErrorTest).tupled(args))
       }
 
       "downstream service error" when {
@@ -134,7 +134,7 @@ class RetrieveInsurancePoliciesControllerISpec extends InsuranceBaseISpec {
           (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
 
-        (errors ++ extraTysErrors).foreach(args => (serviceErrorTest _).tupled(args))
+        (errors ++ extraTysErrors).foreach(args => (serviceErrorTest).tupled(args))
       }
     }
   }
@@ -155,7 +155,7 @@ class RetrieveInsurancePoliciesControllerISpec extends InsuranceBaseISpec {
       setupStubs()
       buildRequest(uri)
         .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (ACCEPT, "application/vnd.hmrc.2.0+json"),
           (AUTHORIZATION, "Bearer 123")
         )
     }

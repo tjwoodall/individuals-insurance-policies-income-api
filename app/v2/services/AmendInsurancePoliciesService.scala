@@ -16,10 +16,10 @@
 
 package v2.services
 
-import cats.implicits._
+import cats.implicits.*
 import common.errors.RuleOutsideAmendmentWindowError
 import shared.controllers.RequestContext
-import shared.models.errors._
+import shared.models.errors.*
 import shared.services.{BaseService, ServiceOutcome}
 import v2.connectors.AmendInsurancePoliciesConnector
 import v2.models.request.amendInsurancePolicies.AmendInsurancePoliciesRequestData
@@ -48,9 +48,9 @@ class AmendInsurancePoliciesService @Inject() (connector: AmendInsurancePolicies
     )
 
     val extraTysErrors = Map(
-      "TAX_YEAR_NOT_SUPPORTED" -> RuleTaxYearNotSupportedError,
-      "OUTSIDE_AMENDMENT_WINDOW"  -> RuleOutsideAmendmentWindowError,
-      "INVALID_CORRELATION_ID" -> InternalError
+      "TAX_YEAR_NOT_SUPPORTED"   -> RuleTaxYearNotSupportedError,
+      "OUTSIDE_AMENDMENT_WINDOW" -> RuleOutsideAmendmentWindowError,
+      "INVALID_CORRELATION_ID"   -> InternalError
     )
 
     errors ++ extraTysErrors

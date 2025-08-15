@@ -23,5 +23,4 @@ object CustomerRefFormatError extends MtdError("FORMAT_CUSTOMER_REF", "The provi
 
 object EventFormatError extends MtdError("FORMAT_EVENT", "The provided policy event is invalid", BAD_REQUEST)
 
-object RuleOutsideAmendmentWindowError
-  extends MtdError("RULE_OUTSIDE_AMENDMENT_WINDOW", "You are outside the amendment window", BAD_REQUEST)
+object RuleOutsideAmendmentWindowError extends MtdError("RULE_OUTSIDE_AMENDMENT_WINDOW", "You are outside the amendment window", BAD_REQUEST)

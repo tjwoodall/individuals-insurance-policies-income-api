@@ -30,15 +30,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AmendInsurancePoliciesController @Inject()(
-                                                  val authService: EnrolmentsAuthService,
-                                                  val lookupService: MtdIdLookupService,
-                                                  validatorFactory: AmendInsurancePoliciesValidatorFactory,
-                                                  service: AmendInsurancePoliciesService,
-                                                  auditService: AuditService,
-                                                  cc: ControllerComponents,
-                                                  val idGenerator: IdGenerator
-                                                )(implicit ec: ExecutionContext, appConfig: SharedAppConfig)
+class AmendInsurancePoliciesController @Inject() (
+    val authService: EnrolmentsAuthService,
+    val lookupService: MtdIdLookupService,
+    validatorFactory: AmendInsurancePoliciesValidatorFactory,
+    service: AmendInsurancePoliciesService,
+    auditService: AuditService,
+    cc: ControllerComponents,
+    val idGenerator: IdGenerator
+)(implicit ec: ExecutionContext, appConfig: SharedAppConfig)
     extends AuthorisedController(cc) {
 
   val endpointName: String = "amend-insurance-policies"

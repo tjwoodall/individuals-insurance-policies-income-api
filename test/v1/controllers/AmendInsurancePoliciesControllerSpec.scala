@@ -23,11 +23,11 @@ import shared.config.MockSharedAppConfig
 import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
+import shared.models.errors.*
 import shared.models.outcomes.ResponseWrapper
 import shared.services.MockAuditService
 import v1.controllers.validators.MockAmendInsurancePoliciesValidatorFactory
-import v1.models.request.amendInsurancePolicies._
+import v1.models.request.amendInsurancePolicies.*
 import v1.services.MockAmendInsurancePoliciesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,7 +39,7 @@ class AmendInsurancePoliciesControllerSpec
     with MockAmendInsurancePoliciesService
     with MockAuditService
     with MockAmendInsurancePoliciesValidatorFactory
-      with MockSharedAppConfig {
+    with MockSharedAppConfig {
 
   val taxYear = "2019-20"
 
@@ -307,7 +307,7 @@ class AmendInsurancePoliciesControllerSpec
 
   trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
-    val controller = new AmendInsurancePoliciesController(
+    val controller: AmendInsurancePoliciesController = new AmendInsurancePoliciesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockAmendInsurancePoliciesValidatorFactory,

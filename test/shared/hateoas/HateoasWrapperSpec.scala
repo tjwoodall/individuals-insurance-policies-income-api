@@ -55,6 +55,12 @@ class HateoasWrapperSpec extends UnitSpec {
                      |}
     """.stripMargin)
     }
+
+    "HateoasWrapper writesEmpty" must {
+      "not write links if there are no links" in {
+        Json.toJson(HateoasWrapper((), Nil)) shouldBe Json.obj()
+      }
+    }
   }
 
 }

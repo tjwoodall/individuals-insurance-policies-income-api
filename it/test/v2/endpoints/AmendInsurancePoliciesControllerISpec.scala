@@ -20,12 +20,14 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.errors.{CustomerRefFormatError, EventFormatError, RuleOutsideAmendmentWindowError}
 import common.support.InsuranceBaseISpec
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import play.api.test.Helpers.AUTHORIZATION
 import shared.models.errors
-import shared.models.errors._
+import shared.models.errors.*
 import shared.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 
 class AmendInsurancePoliciesControllerISpec extends InsuranceBaseISpec {
@@ -934,7 +936,7 @@ class AmendInsurancePoliciesControllerISpec extends InsuranceBaseISpec {
           ("AA123456A", "2019-20", nonValidRequestBodyJson, BAD_REQUEST, ErrorWrapper("X-123", nonValidRequestBodyErrors, None)),
           ("AA123456A", "2019-20", missingFieldRequestBodyJson, BAD_REQUEST, ErrorWrapper("X-123", missingFieldRequestBodyErrors, None))
         )
-        input.foreach(args => (validationErrorTest _).tupled(args))
+        input.foreach(args => (validationErrorTest).tupled(args))
       }
 
       "ifs service error" when {
@@ -973,7 +975,7 @@ class AmendInsurancePoliciesControllerISpec extends InsuranceBaseISpec {
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
           (UNPROCESSABLE_ENTITY, "OUTSIDE_AMENDMENT_WINDOW", BAD_REQUEST, RuleOutsideAmendmentWindowError)
         )
-        input.foreach(args => (serviceErrorTest _).tupled(args))
+        input.foreach(args => (serviceErrorTest).tupled(args))
       }
     }
   }

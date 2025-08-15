@@ -21,7 +21,7 @@ import config.MockInsuranceAppConfig
 import play.api.libs.json.{JsValue, Json}
 import shared.config.MockSharedAppConfig
 import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
+import shared.models.errors.*
 import shared.utils.UnitSpec
 import v1.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRequestBody, AmendInsurancePoliciesRequestData}
 

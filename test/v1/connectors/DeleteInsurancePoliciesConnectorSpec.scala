@@ -29,8 +29,7 @@ class DeleteInsurancePoliciesConnectorSpec extends ConnectorSpec {
 
   val nino: String = "AA123456A"
 
-  trait Test {
-    _: ConnectorTest =>
+  trait Test { self: ConnectorTest =>
 
     def taxYear: TaxYear
 

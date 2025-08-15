@@ -21,12 +21,12 @@ import play.api.mvc.Result
 import shared.config.MockSharedAppConfig
 import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import shared.models.domain.{Nino, TaxYear, Timestamp}
-import shared.models.errors._
+import shared.models.errors.*
 import shared.models.outcomes.ResponseWrapper
 import v2.controllers.validators.MockRetrieveInsurancePoliciesValidatorFactory
 import v2.fixtures.RetrieveInsurancePoliciesControllerFixture.fullRetrieveInsurancePoliciesResponse
 import v2.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
-import v2.models.response.retrieveInsurancePolicies._
+import v2.models.response.retrieveInsurancePolicies.*
 import v2.services.MockRetrieveInsurancePoliciesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,7 +37,7 @@ class RetrieveInsurancePoliciesControllerSpec
     with ControllerTestRunner
     with MockRetrieveInsurancePoliciesService
     with MockRetrieveInsurancePoliciesValidatorFactory
-      with MockSharedAppConfig {
+    with MockSharedAppConfig {
 
   val taxYear: String = "2019-20"
 
@@ -153,7 +153,7 @@ class RetrieveInsurancePoliciesControllerSpec
 
   trait Test extends ControllerTest {
 
-    val controller = new RetrieveInsurancePoliciesController(
+    val controller: RetrieveInsurancePoliciesController = new RetrieveInsurancePoliciesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockRetrieveInsurancePoliciesValidatorFactory,

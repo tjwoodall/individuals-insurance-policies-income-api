@@ -37,7 +37,7 @@ object RetrieveInsurancePoliciesResponse extends JsonUtils {
       (JsPath \ "lifeAnnuity").readNullable[Seq[CommonInsurancePoliciesItem]].mapEmptySeqToNone and
       (JsPath \ "voidedIsa").readNullable[Seq[VoidedIsaPoliciesItem]].mapEmptySeqToNone and
       (JsPath \ "foreign").readNullable[Seq[ForeignPoliciesItem]].mapEmptySeqToNone
-  )(RetrieveInsurancePoliciesResponse.apply _)
+  )(RetrieveInsurancePoliciesResponse.apply)
 
   implicit val writes: OWrites[RetrieveInsurancePoliciesResponse] = Json.writes[RetrieveInsurancePoliciesResponse]
 

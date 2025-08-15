@@ -18,11 +18,11 @@ package v1.services
 
 import shared.controllers.EndpointLogContext
 import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors._
+import shared.models.errors.*
 import shared.models.outcomes.ResponseWrapper
 import shared.services.ServiceSpec
 import v1.connectors.MockAmendInsurancePoliciesConnector
-import v1.models.request.amendInsurancePolicies._
+import v1.models.request.amendInsurancePolicies.*
 
 import scala.concurrent.Future
 
@@ -134,7 +134,7 @@ class AmendInsurancePoliciesServiceSpec extends ServiceSpec {
           ("SERVICE_UNAVAILABLE", InternalError)
         )
 
-        input.foreach(args => (serviceError _).tupled(args))
+        input.foreach(args => (serviceError).tupled(args))
       }
     }
   }

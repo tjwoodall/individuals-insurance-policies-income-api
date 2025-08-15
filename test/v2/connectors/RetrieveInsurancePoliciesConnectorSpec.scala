@@ -56,8 +56,7 @@ class RetrieveInsurancePoliciesConnectorSpec extends InsuranceConnectorSpec {
     }
   }
 
-  trait Test extends MockInsuranceAppConfig {
-    _: ConnectorTest =>
+  trait Test extends MockInsuranceAppConfig { self: ConnectorTest =>
 
     def taxYear: TaxYear
 

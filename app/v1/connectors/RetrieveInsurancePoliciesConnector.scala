@@ -30,11 +30,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveInsurancePoliciesConnector @Inject()(
-                                                    val http: HttpClientV2,
-                                                    val appConfig: SharedAppConfig,
-                                                    insuranceConfig: InsuranceAppConfig
-                                                  ) extends BaseDownstreamConnector {
+class RetrieveInsurancePoliciesConnector @Inject() (
+    val http: HttpClientV2,
+    val appConfig: SharedAppConfig,
+    insuranceConfig: InsuranceAppConfig
+) extends BaseDownstreamConnector {
 
   def retrieveInsurancePolicies(request: RetrieveInsurancePoliciesRequestData)(implicit
       hc: HeaderCarrier,
