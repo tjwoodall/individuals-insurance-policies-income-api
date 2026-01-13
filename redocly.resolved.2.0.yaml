@@ -1,0 +1,993 @@
+openapi: 3.0.3
+info:
+  version: '2.0'
+  title: Individuals Insurance Policies Income (MTD)
+  description: |
+    The following endpoints are stateful in the Sandbox:
+    * Retrieve Insurance Policies Income
+    * Create and Amend Insurance Policies Income
+    * Delete Insurance Policies Income
+
+    # Send fraud prevention data
+    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
+
+    <div class="govuk-warning-text warning-icon-fix">
+      <span class="govuk-warning-text__icon warning-icon-ui-fix" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        You are required by law to submit header data for this API. This includes all associated APIs and endpoints.
+      </strong>
+    </div>
+
+    [Check the data you need to send](/guides/fraud-prevention/). You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0) during initial development and as part of your quality assurance checks.
+
+    # Mapping APIs to Self Assessment tax return forms
+    Some parameters in this API map to box numbers in one or more Self Assessment tax return forms. To learn more and to download this mapping information as a CSV file, go to [income-tax-mtd-changelog/mapping](https://github.com/hmrc/income-tax-mtd-changelog?tab=readme-ov-file#mapping-apis-to-self-assessment-tax-return-forms) on GitHub.
+
+    # Changelog
+    You can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/#readme) on GitHub.
+
+    # Support
+
+    * Direct reports of bugs or errors in Production or Sandbox code, or queries about HMRC business functionality (such as how a specific field is used by HMRC or why it is needed) to the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).
+    * Send queries or feedback related to the design of the APIs (including recommended changes) using the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues) GitHub page.
+    * <a href="/contact/report-technical-problem?newTab=true&service=api-documentation-frontend" target="_blank">Is this page not working properly? (opens in new tab)</a>
+servers:
+  - url: https://test-api.service.hmrc.gov.uk
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk
+    description: Production
+paths:
+  /individuals/insurance-policies-income/{nino}/{taxYear}:
+    get:
+      summary: Retrieve Insurance Policies Income
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      description: |
+        This endpoint enables you to retrieve insurance policies and less common types of income: Life Insurance Policies,
+        Life Annuity Contracts, Capital Redemption Policies, Voided ISAs, Foreign Policies. A National Insurance number and 
+        tax year must be provided.
+
+        ###  Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                         |
+        | -------------------------------- | ---------------------------------------------------------------- |
+        | N/A - DEFAULT                    | Simulates success response.                                      |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                   |
+        | REQUEST_CANNOT_BE_FULFILLED      | Simulates the scenario where the request could not be processed. |
+        | STATEFUL                         | Performs a stateful retrieve.                                    |
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: &ref_3
+            type: string
+            example: TC663795B
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year the data applies to, for example, 2021-22. 
+            The start year and end year must not span two tax years. The minimum tax year is 2021-22. No gaps are allowed, for example, 2020-22 is not valid.
+            (The minimum tax year in Sandbox is 2019-20.)
+          schema: &ref_4
+            type: string
+            example: 2021-22
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: &ref_5
+            type: string
+            enum:
+              - application/vnd.hmrc.2.0+json
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema:
+            type: string
+            example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: &ref_6
+            type: string
+          required: false
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: &ref_0
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+              required: true
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: Retrieve Insurance Policies Income Request
+                description: Retrieve Insurance Policies Income Request
+                type: object
+                properties:
+                  submittedOn:
+                    type: string
+                    description: The date the Insurance policy information was added. It must be provided in the format YYYY-MM-DDThh:mm:ssZ
+                    example: '2021-04-06T09:37:17Z'
+                  lifeInsurance:
+                    type: array
+                    description: Financial details about life insurance income
+                    items:
+                      type: object
+                      description: Financial details about life insurance income.
+                      properties: &ref_7
+                        customerReference:
+                          type: string
+                          description: A user supplied reference to identify the insurance policy. Must be between 1 and 90 characters in length.
+                          example: INPOLY123A
+                          pattern: ^[0-9a-zA-Z{À-˿’}\- _&`():.'^]{1,90}$
+                        event:
+                          type: string
+                          description: Details of each individual policy event. Must be between 1 and 90 characters in length.
+                          example: Policy matured
+                          pattern: ^[0-9a-zA-Z{À-˿’}\- _&`():.'^]{1,90}$
+                        gainAmount:
+                          type: number
+                          description: The amount of the gain. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: '5000.99'
+                          multipleOf: 0.01
+                          minimum: 0
+                          'maximum:': 99999999999.99
+                        taxPaid:
+                          type: boolean
+                          description: A boolean indicating whether tax has been paid.
+                          example: 'true'
+                        yearsHeld:
+                          type: number
+                          description: The number of years the policy has been held. The value must be between 0 and 99 no decimals.
+                          example: '10'
+                          multipleOf: 1
+                          minimum: 0
+                          'maximum:': 99
+                        yearsHeldSinceLastGain:
+                          type: number
+                          description: The number of years the policy has been held since the last gain. The value must be between 0 and 99 no decimals.
+                          example: '5'
+                          multipleOf: 1
+                          minimum: 0
+                          'maximum:': 99
+                        deficiencyRelief:
+                          type: number
+                          description: The amount of available relief. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: '5000.99'
+                          multipleOf: 0.01
+                          minimum: 0
+                          'maximum:': 99999999999.99
+                      required: &ref_8
+                        - gainAmount
+                        - taxPaid
+                  capitalRedemption:
+                    type: array
+                    description: Financial details about life capital redemption income
+                    items:
+                      type: object
+                      description: Financial details about life capital redemption income.
+                      properties: &ref_9
+                        customerReference:
+                          type: string
+                          description: A user supplied reference to identify the insurance policy. Must be between 1 and 90 characters in length.
+                          example: INPOLY123A
+                          pattern: ^[0-9a-zA-Z{À-˿’}\- _&`():.'^]{1,90}$
+                        event:
+                          type: string
+                          description: Details of each individual policy event. Must be between 1 and 90 characters in length.
+                          example: Policy matured
+                          pattern: ^[0-9a-zA-Z{À-˿’}\- _&`():.'^]{1,90}$
+                        gainAmount:
+                          type: number
+                          description: The amount of the gain. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: '5000.99'
+                          multipleOf: 0.01
+                          minimum: 0
+                          'maximum:': 99999999999.99
+                        taxPaid:
+                          type: boolean
+                          description: A boolean indicating whether tax has been paid.
+                          example: 'true'
+                        yearsHeld:
+                          type: number
+                          description: The number of years the policy has been held. The value must be between 0 and 99 no decimals.
+                          example: '10'
+                          multipleOf: 1
+                          minimum: 0
+                          'maximum:': 99
+                        yearsHeldSinceLastGain:
+                          type: number
+                          description: The number of years the policy has been held since the last gain. The value must be between 0 and 99 no decimals.
+                          example: '5'
+                          multipleOf: 1
+                          minimum: 0
+                          'maximum:': 99
+                        deficiencyRelief:
+                          type: number
+                          description: The amount of available relief. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: '5000.99'
+                          multipleOf: 0.01
+                          minimum: 0
+                          'maximum:': 99999999999.99
+                      required: &ref_10
+                        - gainAmount
+                        - taxPaid
+                  lifeAnnuity:
+                    type: array
+                    description: Financial details about life annuity income
+                    items:
+                      type: object
+                      description: Financial details about life annuity income.
+                      properties: &ref_11
+                        customerReference:
+                          type: string
+                          description: A user supplied reference to identify the insurance policy. Must be between 1 and 90 characters in length.
+                          example: INPOLY123A
+                          pattern: ^[0-9a-zA-Z{À-˿’}\- _&`():.'^]{1,90}$
+                        event:
+                          type: string
+                          description: Details of each individual policy event. Must be between 1 and 90 characters in length.
+                          example: Policy matured
+                          pattern: ^[0-9a-zA-Z{À-˿’}\- _&`():.'^]{1,90}$
+                        gainAmount:
+                          type: number
+                          description: The amount of the gain. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: '5000.99'
+                          multipleOf: 0.01
+                          minimum: 0
+                          'maximum:': 99999999999.99
+                        taxPaid:
+                          type: boolean
+                          description: A boolean indicating whether tax has been paid.
+                          example: 'true'
+                        yearsHeld:
+                          type: number
+                          description: The number of years the policy has been held. The value must be between 0 and 99 no decimals.
+                          example: '10'
+                          multipleOf: 1
+                          minimum: 0
+                          'maximum:': 99
+                        yearsHeldSinceLastGain:
+                          type: number
+                          description: The number of years the policy has been held since the last gain. The value must be between 0 and 99 no decimals.
+                          example: '5'
+                          multipleOf: 1
+                          minimum: 0
+                          'maximum:': 99
+                        deficiencyRelief:
+                          type: number
+                          description: The amount of available relief. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: '5000.99'
+                          multipleOf: 0.01
+                          minimum: 0
+                          'maximum:': 99999999999.99
+                      required: &ref_12
+                        - gainAmount
+                        - taxPaid
+                  voidedIsa:
+                    type: array
+                    description: Financial details about voided ISA's income
+                    items:
+                      type: object
+                      description: Financial details about voided ISA's income.
+                      properties: &ref_13
+                        customerReference:
+                          type: string
+                          description: A user supplied reference to identify the insurance policy. Must be between 1 and 90 characters in length.
+                          example: INPOLY123A
+                          pattern: ^[0-9a-zA-Z{À-˿’}\- _&`():.'^]{1,90}$
+                        event:
+                          type: string
+                          description: Details of each individual policy event. Must be between 1 and 90 characters in length.
+                          example: Policy matured
+                          pattern: ^[0-9a-zA-Z{À-˿’}\- _&`():.'^]{1,90}$
+                        taxPaidAmount:
+                          type: number
+                          description: The amount of tax paid on each gain. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: '5000.99'
+                          multipleOf: 0.01
+                          minimum: 0
+                          'maximum:': 99999999999.99
+                        gainAmount:
+                          type: number
+                          description: The amount of the gain. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: '5000.99'
+                          multipleOf: 0.01
+                          minimum: 0
+                          'maximum:': 99999999999.99
+                        yearsHeld:
+                          type: number
+                          description: The number of years the policy has been held. The value must be between 0 and 99 no decimals.
+                          example: '10'
+                          multipleOf: 1
+                          minimum: 0
+                          'maximum:': 99
+                        yearsHeldSinceLastGain:
+                          type: number
+                          description: The number of years the policy has been held since the last gain. The value must be between 0 and 99 no decimals.
+                          example: '5'
+                          multipleOf: 1
+                          minimum: 0
+                          'maximum:': 99
+                      required: &ref_14
+                        - gainAmount
+                  foreign:
+                    type: array
+                    description: Financial details about foreign policies Items income
+                    items:
+                      type: object
+                      description: Financial details about foreign policies.
+                      properties: &ref_15
+                        customerReference:
+                          type: string
+                          description: A user supplied reference to identify the insurance policy. Must be between 1 and 90 characters in length.
+                          example: INPOLY123A
+                          pattern: ^[0-9a-zA-Z{À-˿’}\- _&`():.'^]{1,90}$
+                        gainAmount:
+                          type: number
+                          description: The amount of the gain. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: '5000.99'
+                          multipleOf: 0.01
+                          minimum: 0
+                          'maximum:': 99999999999.99
+                        taxPaidAmount:
+                          type: number
+                          description: The amount of tax paid on each gain. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: '5000.99'
+                          multipleOf: 0.01
+                          minimum: 0
+                          'maximum:': 99999999999.99
+                        yearsHeld:
+                          type: number
+                          description: The number of years the policy has been held. The value must be between 0 and 99 no decimals.
+                          example: '10'
+                          multipleOf: 1
+                          minimum: 0
+                          'maximum:': 99
+                      required: &ref_16
+                        - gainAmount
+                required:
+                  - submittedOn
+              examples:
+                default:
+                  description: Full Insurance Response
+                  value:
+                    submittedOn: '2021-04-06T09:37:17.000Z'
+                    lifeInsurance:
+                      - customerReference: INPOLY123A
+                        event: Policy matured
+                        gainAmount: 1000.23
+                        taxPaid: true
+                        yearsHeld: 10
+                        yearsHeldSinceLastGain: 1
+                        deficiencyRelief: 100.23
+                    capitalRedemption:
+                      - customerReference: INPOLY123B
+                        event: Policy matured
+                        gainAmount: 1000.23
+                        taxPaid: true
+                        yearsHeld: 10
+                        yearsHeldSinceLastGain: 1
+                        deficiencyRelief: 100.23
+                    lifeAnnuity:
+                      - customerReference: INPOLY123C
+                        event: Policy matured
+                        gainAmount: 1000.23
+                        taxPaid: true
+                        yearsHeld: 10
+                        yearsHeldSinceLastGain: 1
+                        deficiencyRelief: 100.23
+                    voidedIsa:
+                      - customerReference: INPOLY123D
+                        event: Policy matured
+                        gainAmount: 1000.23
+                        taxPaidAmount: 100.23
+                        yearsHeld: 10
+                        yearsHeldSinceLastGain: 1
+                    foreign:
+                      - customerReference: INPOLY123E
+                        gainAmount: 1000.23
+                        taxPaidAmount: 100.23
+                        yearsHeld: 10
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: &ref_1
+                  code:
+                    description: The error code
+                    type: string
+                  message:
+                    description: The error message
+                    type: string
+                required: &ref_2
+                  - code
+              examples:
+                FORMAT_NINO:
+                  description: The format of the supplied NINO field is not valid.
+                  value: &ref_17
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                FORMAT_TAX_YEAR:
+                  description: The format of the supplied tax year field is not valid.
+                  value: &ref_18
+                    code: FORMAT_TAX_YEAR
+                    message: The provided tax year is invalid
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported.
+                    Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: &ref_19
+                    code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    message: The tax year specified does not lie within the supported range
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: Tax year range invalid. A tax year range of one year is required.
+                  value: &ref_20
+                    code: RULE_TAX_YEAR_RANGE_INVALID
+                    message: Tax year range invalid. A tax year range of one year is required
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: &ref_21
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client or agent is not authorised. This is because: the client is not subscribed to MTD, 
+                    the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: &ref_22
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client and/or agent is not authorised
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: The supplied income source could not be found.
+                  value: &ref_26
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+        '422':
+          description: Unprocessable Entity
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                RULE_REQUEST_CANNOT_BE_FULFILLED:
+                  description: The request cannot be fulfilled. More specific information is provided in the error message.
+                  value: &ref_23
+                    code: RULE_REQUEST_CANNOT_BE_FULFILLED
+                    message: Custom (will vary in production depending on the actual error)
+    put:
+      summary: Create and Amend Insurance Policies Income
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      description: |
+        This endpoint enables you to create and amend insurance policies and financial income for less common types of income:
+        Life Insurance Policies, Life Annuity Contracts, Capital Redemption Policies, Voided ISAs and Foreign Policies.
+        A National Insurance number and tax year must be provided.
+
+        ###  Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                         |
+        | -------------------------------- | ---------------------------------------------------------------- |
+        | N/A - DEFAULT                    | Simulates success response.                                      |
+        | REQUEST_CANNOT_BE_FULFILLED      | Simulates the scenario where the request could not be processed. |
+        | STATEFUL                         | Performs a stateful create and update.                           |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_3
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year the data applies to, for example, 2021-22. 
+            The start year and end year must not span two tax years. The minimum tax year is 2021-22. No gaps are allowed, for example, 2020-22 is not valid.
+            (The minimum tax year in Sandbox is 2019-20.)
+          schema: *ref_4
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Content-Type
+          in: header
+          description: |
+            Specifies the format of the request body, which must be JSON.
+          schema:
+            type: string
+            enum:
+              - application/json
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: &ref_24
+            type: string
+            example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_6
+          required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              title: Create And Amend Insurance Policies Income Request
+              description: Create And Amend Insurance Policies Income Request
+              type: object
+              properties:
+                lifeInsurance:
+                  type: array
+                  description: Financial details about life insurance income
+                  items:
+                    type: object
+                    description: Financial details about life insurance income.
+                    properties: *ref_7
+                    required: *ref_8
+                capitalRedemption:
+                  type: array
+                  description: Financial details about life capital redemption income
+                  items:
+                    type: object
+                    description: Financial details about life capital redemption income.
+                    properties: *ref_9
+                    required: *ref_10
+                lifeAnnuity:
+                  type: array
+                  description: Financial details about life annuity income
+                  items:
+                    type: object
+                    description: Financial details about life annuity income.
+                    properties: *ref_11
+                    required: *ref_12
+                voidedIsa:
+                  type: array
+                  description: Financial details about voided ISA's income
+                  items:
+                    type: object
+                    description: Financial details about voided ISA's income.
+                    properties: *ref_13
+                    required: *ref_14
+                foreign:
+                  type: array
+                  description: Financial details about foreign policies Items income
+                  items:
+                    type: object
+                    description: Financial details about foreign policies.
+                    properties: *ref_15
+                    required: *ref_16
+            examples:
+              full_amendment:
+                description: Full Insurance Policies Income Amendment
+                value:
+                  lifeInsurance:
+                    - customerReference: INPOLY123A
+                      event: Policy matured
+                      gainAmount: 1000.23
+                      taxPaid: true
+                      yearsHeld: 10
+                      yearsHeldSinceLastGain: 1
+                      deficiencyRelief: 100.23
+                  capitalRedemption:
+                    - customerReference: INPOLY123B
+                      event: Policy matured
+                      gainAmount: 1000.23
+                      taxPaid: true
+                      yearsHeld: 10
+                      yearsHeldSinceLastGain: 1
+                      deficiencyRelief: 100.23
+                  lifeAnnuity:
+                    - customerReference: INPOLY123C
+                      event: Policy matured
+                      gainAmount: 1000.23
+                      taxPaid: true
+                      yearsHeld: 10
+                      yearsHeldSinceLastGain: 1
+                      deficiencyRelief: 100.23
+                  voidedIsa:
+                    - customerReference: INPOLY123D
+                      event: Policy matured
+                      gainAmount: 1000.23
+                      taxPaidAmount: 100.23
+                      yearsHeld: 10
+                      yearsHeldSinceLastGain: 1
+                  foreign:
+                    - customerReference: INPOLY123E
+                      gainAmount: 1000.23
+                      taxPaidAmount: 100.23
+                      yearsHeld: 10
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: The format of the supplied NINO field is not valid.
+                  value: *ref_17
+                FORMAT_TAX_YEAR:
+                  description: The format of the supplied tax year field is not valid.
+                  value: *ref_18
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported.
+                    Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: *ref_19
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_20
+                FORMAT_CUSTOMER_REF:
+                  description: The format of the supplied customer reference is not valid.
+                  value:
+                    code: FORMAT_CUSTOMER_REF
+                    message: The provided customer reference is invalid
+                FORMAT_EVENT:
+                  description: The format of policy event is not valid.
+                  value:
+                    code: FORMAT_EVENT
+                    message: The provided policy event is invalid
+                FORMAT_VALUE:
+                  description: One or more values have been added with the incorrect format.
+                  value:
+                    code: FORMAT_VALUE
+                    message: The value must be between 0.00 and 99999999999.99
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: An empty or non-matching body was submitted.
+                  value:
+                    code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
+                    message: An empty or non-matching body was submitted
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_21
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: The request cannot be completed as you are outside the amendment window.
+                  value: &ref_25
+                    code: RULE_OUTSIDE_AMENDMENT_WINDOW
+                    message: You are outside the amendment window
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client or agent is not authorised. This is because: the client is not subscribed to MTD, 
+                    the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_22
+        '422':
+          description: Unprocessable Entity
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                RULE_REQUEST_CANNOT_BE_FULFILLED:
+                  description: The request cannot be fulfilled. More specific information is provided in the error message.
+                  value: *ref_23
+    delete:
+      summary: Delete Insurance Policies Income
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      description: |
+        This endpoint enables you to delete insurance policies and less common types of income:
+        Life Insurance Policies, Life Annuity Contracts, Capital Redemption Policies, Voided ISAs, Foreign Policies.
+        A National Insurance number and tax year must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                         |
+        | -------------------------------- | ---------------------------------------------------------------- |
+        | N/A - DEFAULT                    | Simulates success response.                                      |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                   |
+        | REQUEST_CANNOT_BE_FULFILLED      | Simulates the scenario where the request could not be processed. |
+        | STATEFUL                         | Performs a stateful delete.                                      |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_3
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year the data applies to, for example, 2021-22. 
+            The start year and end year must not span two tax years. The minimum tax year is 2021-22. No gaps are allowed, for example, 2020-22 is not valid.
+            (The minimum tax year in Sandbox is 2019-20.)
+          schema: *ref_4
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_24
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_6
+          required: false
+      responses:
+        '204':
+          description: No Content
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: The format of the supplied NINO field is not valid.
+                  value: *ref_17
+                FORMAT_TAX_YEAR:
+                  description: The format of the supplied tax year field is not valid.
+                  value: *ref_18
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported.
+                    Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: *ref_19
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_20
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_21
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: The request cannot be completed as you are outside the amendment window.
+                  value: *ref_25
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client or agent is not authorised. This is because: the client is not subscribed to MTD, 
+                    the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_22
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: The supplied income source could not be found.
+                  value: *ref_26
+        '422':
+          description: Unprocessable Entity
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                RULE_REQUEST_CANNOT_BE_FULFILLED:
+                  description: The request cannot be fulfilled. More specific information is provided in the error message.
+                  value: *ref_23
+components:
+  securitySchemes:
+    User-Restricted:
+      type: oauth2
+      description: HMRC supports OAuth 2.0 for authenticating [User-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) API requests
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:self-assessment: Grant write access
+            read:self-assessment: Grant read access
