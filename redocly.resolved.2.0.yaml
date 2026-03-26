@@ -40,10 +40,10 @@ servers:
 paths:
   /individuals/insurance-policies-income/{nino}/{taxYear}:
     get:
-      summary: Retrieve Insurance Policies Income
       security:
         - User-Restricted:
             - read:self-assessment
+      summary: Retrieve Insurance Policies Income
       description: |
         This endpoint enables you to retrieve insurance policies and less common types of income: Life Insurance Policies,
         Life Annuity Contracts, Capital Redemption Policies, Voided ISAs, Foreign Policies. A National Insurance number and 
@@ -371,43 +371,7 @@ paths:
                 default:
                   description: Full Insurance Response
                   value:
-                    submittedOn: '2021-04-06T09:37:17.000Z'
-                    lifeInsurance:
-                      - customerReference: INPOLY123A
-                        event: Policy matured
-                        gainAmount: 1000.23
-                        taxPaid: true
-                        yearsHeld: 10
-                        yearsHeldSinceLastGain: 1
-                        deficiencyRelief: 100.23
-                    capitalRedemption:
-                      - customerReference: INPOLY123B
-                        event: Policy matured
-                        gainAmount: 1000.23
-                        taxPaid: true
-                        yearsHeld: 10
-                        yearsHeldSinceLastGain: 1
-                        deficiencyRelief: 100.23
-                    lifeAnnuity:
-                      - customerReference: INPOLY123C
-                        event: Policy matured
-                        gainAmount: 1000.23
-                        taxPaid: true
-                        yearsHeld: 10
-                        yearsHeldSinceLastGain: 1
-                        deficiencyRelief: 100.23
-                    voidedIsa:
-                      - customerReference: INPOLY123D
-                        event: Policy matured
-                        gainAmount: 1000.23
-                        taxPaidAmount: 100.23
-                        yearsHeld: 10
-                        yearsHeldSinceLastGain: 1
-                    foreign:
-                      - customerReference: INPOLY123E
-                        gainAmount: 1000.23
-                        taxPaidAmount: 100.23
-                        yearsHeld: 10
+                    $ref: ./examples/retrieve_insurance_response.json
         '400':
           description: Bad request
           headers:
@@ -536,10 +500,10 @@ paths:
                     code: RULE_REQUEST_CANNOT_BE_FULFILLED
                     message: Custom (will vary in production depending on the actual error)
     put:
-      summary: Create and Amend Insurance Policies Income
       security:
         - User-Restricted:
             - write:self-assessment
+      summary: Create and Amend Insurance Policies Income
       description: |
         This endpoint enables you to create and amend insurance policies and financial income for less common types of income:
         Life Insurance Policies, Life Annuity Contracts, Capital Redemption Policies, Voided ISAs and Foreign Policies.
@@ -651,42 +615,7 @@ paths:
               full_amendment:
                 description: Full Insurance Policies Income Amendment
                 value:
-                  lifeInsurance:
-                    - customerReference: INPOLY123A
-                      event: Policy matured
-                      gainAmount: 1000.23
-                      taxPaid: true
-                      yearsHeld: 10
-                      yearsHeldSinceLastGain: 1
-                      deficiencyRelief: 100.23
-                  capitalRedemption:
-                    - customerReference: INPOLY123B
-                      event: Policy matured
-                      gainAmount: 1000.23
-                      taxPaid: true
-                      yearsHeld: 10
-                      yearsHeldSinceLastGain: 1
-                      deficiencyRelief: 100.23
-                  lifeAnnuity:
-                    - customerReference: INPOLY123C
-                      event: Policy matured
-                      gainAmount: 1000.23
-                      taxPaid: true
-                      yearsHeld: 10
-                      yearsHeldSinceLastGain: 1
-                      deficiencyRelief: 100.23
-                  voidedIsa:
-                    - customerReference: INPOLY123D
-                      event: Policy matured
-                      gainAmount: 1000.23
-                      taxPaidAmount: 100.23
-                      yearsHeld: 10
-                      yearsHeldSinceLastGain: 1
-                  foreign:
-                    - customerReference: INPOLY123E
-                      gainAmount: 1000.23
-                      taxPaidAmount: 100.23
-                      yearsHeld: 10
+                  $ref: ./examples/amend_insurance_request.json
       responses:
         '200':
           description: Success
@@ -807,10 +736,10 @@ paths:
                   description: The request cannot be fulfilled. More specific information is provided in the error message.
                   value: *ref_23
     delete:
-      summary: Delete Insurance Policies Income
       security:
         - User-Restricted:
             - write:self-assessment
+      summary: Delete Insurance Policies Income
       description: |
         This endpoint enables you to delete insurance policies and less common types of income:
         Life Insurance Policies, Life Annuity Contracts, Capital Redemption Policies, Voided ISAs, Foreign Policies.
