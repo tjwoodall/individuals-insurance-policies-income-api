@@ -33,17 +33,14 @@ servers:
 paths:
   /individuals/insurance-policies-income/{nino}/{taxYear}:
     get:
-      summary: Retrieve Insurance Policies Income
       security:
       - User-Restricted:
         - read:self-assessment
     put:
-      summary: Create and Amend Insurance Policies Income
       security:
       - User-Restricted:
         - write:self-assessment
     delete:
-      summary: Delete Insurance Policies Income
       security:
       - User-Restricted:
         - write:self-assessment
