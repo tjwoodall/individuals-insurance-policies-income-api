@@ -16,8 +16,7 @@
 
 package v2.models.request.amendInsurancePolicies
 
-import common.utils.JsonUtils
-import play.api.libs.functional.syntax._
+import play.api.libs.functional.syntax.*
 import play.api.libs.json.{JsPath, OWrites, Reads}
 
 case class AmendInsurancePoliciesRequestBody(lifeInsurance: Option[Seq[AmendCommonInsurancePoliciesItem]],
@@ -26,15 +25,15 @@ case class AmendInsurancePoliciesRequestBody(lifeInsurance: Option[Seq[AmendComm
                                              voidedIsa: Option[Seq[AmendVoidedIsaPoliciesItem]],
                                              foreign: Option[Seq[AmendForeignPoliciesItem]])
 
-object AmendInsurancePoliciesRequestBody extends JsonUtils {
+object AmendInsurancePoliciesRequestBody {
   val empty: AmendInsurancePoliciesRequestBody = AmendInsurancePoliciesRequestBody(None, None, None, None, None)
 
   implicit val reads: Reads[AmendInsurancePoliciesRequestBody] = (
-    (JsPath \ "lifeInsurance").readNullable[Seq[AmendCommonInsurancePoliciesItem]].mapEmptySeqToNone and
-      (JsPath \ "capitalRedemption").readNullable[Seq[AmendCommonInsurancePoliciesItem]].mapEmptySeqToNone and
-      (JsPath \ "lifeAnnuity").readNullable[Seq[AmendCommonInsurancePoliciesItem]].mapEmptySeqToNone and
-      (JsPath \ "voidedIsa").readNullable[Seq[AmendVoidedIsaPoliciesItem]].mapEmptySeqToNone and
-      (JsPath \ "foreign").readNullable[Seq[AmendForeignPoliciesItem]].mapEmptySeqToNone
+    (JsPath \ "lifeInsurance").readNullable[Seq[AmendCommonInsurancePoliciesItem]] and
+      (JsPath \ "capitalRedemption").readNullable[Seq[AmendCommonInsurancePoliciesItem]] and
+      (JsPath \ "lifeAnnuity").readNullable[Seq[AmendCommonInsurancePoliciesItem]] and
+      (JsPath \ "voidedIsa").readNullable[Seq[AmendVoidedIsaPoliciesItem]] and
+      (JsPath \ "foreign").readNullable[Seq[AmendForeignPoliciesItem]]
   )(AmendInsurancePoliciesRequestBody.apply)
 
   implicit val writes: OWrites[AmendInsurancePoliciesRequestBody] = (

@@ -76,6 +76,18 @@ class AmendInsurancePoliciesRequestBodySpec extends UnitSpec {
     """.stripMargin
   )
 
+  val emptyArraysJson = Json.parse(
+    """
+      |{
+      |   "lifeInsurance":[],
+      |   "capitalRedemption":[],
+      |   "lifeAnnuity":[],
+      |   "voidedIsa":[],
+      |   "foreign":[]
+      |}
+    """.stripMargin
+  )
+
   private val lifeInsuranceItemModel = AmendCommonInsurancePoliciesItem(
     customerReference = Some("INPOLY123A"),
     event = Some("Death of spouse"),
@@ -130,6 +142,14 @@ class AmendInsurancePoliciesRequestBodySpec extends UnitSpec {
     foreign = Some(Seq(foreignItemModel))
   )
 
+  private val emptyArraysResponseModel = AmendInsurancePoliciesRequestBody(
+    lifeInsurance = Some(Seq.empty),
+    capitalRedemption = Some(Seq.empty),
+    lifeAnnuity = Some(Seq.empty),
+    voidedIsa = Some(Seq.empty),
+    foreign = Some(Seq.empty)
+  )
+
   "InsurancePoliciesItem" when {
     "read from valid JSON" should {
       "produce the expected object" in {
@@ -155,6 +175,12 @@ class AmendInsurancePoliciesRequestBodySpec extends UnitSpec {
       }
     }
 
+    "read from JSON with only empty arrays" should {
+      "produce an RetrieveInsurancePoliciesResponse Object with only empty arrays" in {
+        emptyArraysJson.as[AmendInsurancePoliciesRequestBody] shouldBe emptyArraysResponseModel
+      }
+    }
+
     "read from empty JSON" should {
       "produce an empty RetrieveInsurancePoliciesResponse Object" in {
         val emptyJson = JsObject.empty
@@ -165,6 +191,12 @@ class AmendInsurancePoliciesRequestBodySpec extends UnitSpec {
     "written to JSON" should {
       "produce the expected JSON" in {
         Json.toJson(responseModel) shouldBe json
+      }
+    }
+
+    "written to JSON with only empty arrays" should {
+      "produce the expected JSON" in {
+        Json.toJson(emptyArraysResponseModel) shouldBe emptyArraysJson
       }
     }
   }

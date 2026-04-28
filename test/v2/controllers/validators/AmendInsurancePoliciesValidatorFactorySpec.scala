@@ -135,6 +135,18 @@ class AmendInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockShare
 
   private val emptyRequestBodyJson: JsValue = Json.parse("""{}""")
 
+  private val emptyArraysRequestBodyJson: JsValue = Json.parse(
+    """
+      |{
+      |   "lifeInsurance":[],
+      |   "capitalRedemption":[],
+      |   "lifeAnnuity":[],
+      |   "voidedIsa":[],
+      |   "foreign":[]
+      |}
+    """.stripMargin
+  )
+
   private val nonsenseRequestBodyJson: JsValue = Json.parse("""{"field": "value"}""")
 
   private val nonValidRequestBodyJson: JsValue = Json.parse(
@@ -482,6 +494,24 @@ class AmendInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockShare
 
         result shouldBe Left(
           ErrorWrapper(correlationId, RuleIncorrectOrEmptyBodyError)
+        )
+      }
+
+      "a non-empty body containing only empty arrays is submitted" in {
+        val result: Either[ErrorWrapper, AmendInsurancePoliciesRequestData] =
+          validator(validNino, validTaxYear, emptyArraysRequestBodyJson).validateAndWrapResult()
+
+        result shouldBe Left(
+          ErrorWrapper(
+            correlationId,
+            RuleIncorrectOrEmptyBodyError.withPaths(
+              Seq(
+                "/lifeInsurance",
+                "/capitalRedemption",
+                "/lifeAnnuity",
+                "/voidedIsa",
+                "/foreign"
+              )))
         )
       }
 
