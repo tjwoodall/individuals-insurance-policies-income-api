@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package v2.controllers.validators
 
 import cats.data.Validated
-import cats.implicits._
+import cats.implicits.*
 import common.errors.{CustomerRefFormatError, EventFormatError}
 import shared.controllers.validators.RulesValidator
 import shared.controllers.validators.resolvers.{ResolveInteger, ResolveParsedNumber, ResolveStringPattern}
@@ -35,6 +35,9 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
   private val resolveNonNegativeMinimumIntegerNumber = ResolveInteger(0, 99)
 
   private val regex = "^[0-9a-zA-Z{À-˿'}\\- _&`():.'^]{1,90}$".r
+
+  private def resolveStringByPattern(value: Option[String], error: MtdError): Validated[Seq[MtdError], Option[String]] =
+    ResolveStringPattern(value, regex, error)
 
   def validateBusinessRules(parsed: AmendInsurancePoliciesRequestData): Validated[Seq[MtdError], AmendInsurancePoliciesRequestData] = {
     import parsed.body._
@@ -71,19 +74,11 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
   private def validateCommonItem(commonItem: AmendCommonInsurancePoliciesItem, itemName: String, arrayIndex: Int): Validated[Seq[MtdError], Unit] = {
     import commonItem._
 
-    val validatedCustomerRef = customerReference match {
-      case Some(value) =>
-        val resolveCustomerRef = new ResolveStringPattern(regex, CustomerRefFormatError.withPath(s"/$itemName/$arrayIndex/customerReference"))
-        resolveCustomerRef(value)
-      case None => valid
-    }
+    def path(suffix: String) = s"/$itemName/$arrayIndex/$suffix"
 
-    val validatedEvent = event match {
-      case Some(value) =>
-        val resolveEvent = new ResolveStringPattern(regex, EventFormatError.withPath(s"/$itemName/$arrayIndex/event"))
-        resolveEvent(value)
-      case None => valid
-    }
+    val validatedCustomerRef = resolveStringByPattern(commonItem.customerReference, CustomerRefFormatError.withPath(path("customerReference")))
+
+    val validatedEvent = resolveStringByPattern(commonItem.event, EventFormatError.withPath(path("event")))
 
     val validatedMandatoryDecimalNumber = resolveNonNegativeDecimalNumber(gainAmount, s"/$itemName/$arrayIndex/gainAmount")
 
@@ -103,19 +98,11 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
   private def validateVoidedIsa(voidedIsa: AmendVoidedIsaPoliciesItem, arrayIndex: Int): Validated[Seq[MtdError], Unit] = {
     import voidedIsa._
 
-    val validatedCustomerRef = customerReference match {
-      case Some(value) =>
-        val resolveCustomerRef = new ResolveStringPattern(regex, CustomerRefFormatError.withPath(s"/voidedIsa/$arrayIndex/customerReference"))
-        resolveCustomerRef(value)
-      case None => valid
-    }
+    def path(suffix: String) = s"/voidedIsa/$arrayIndex/$suffix"
 
-    val validatedEvent = event match {
-      case Some(value) =>
-        val resolveEvent = new ResolveStringPattern(regex, EventFormatError.withPath(s"/voidedIsa/$arrayIndex/event"))
-        resolveEvent(value)
-      case None => valid
-    }
+    val validatedCustomerRef = resolveStringByPattern(voidedIsa.customerReference, CustomerRefFormatError.withPath(path("customerReference")))
+
+    val validatedEvent = resolveStringByPattern(voidedIsa.event, EventFormatError.withPath(path("event")))
 
     val validatedMandatoryDecimalNumber = resolveNonNegativeDecimalNumber(gainAmount, s"/voidedIsa/$arrayIndex/gainAmount")
 
@@ -135,12 +122,7 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
   private def validateForeign(foreign: AmendForeignPoliciesItem, arrayIndex: Int): Validated[Seq[MtdError], Unit] = {
     import foreign._
 
-    val validatedCustomerRef = customerReference match {
-      case Some(value) =>
-        val resolveCustomerRef = new ResolveStringPattern(regex, CustomerRefFormatError.withPath(s"/foreign/$arrayIndex/customerReference"))
-        resolveCustomerRef(value)
-      case None => valid
-    }
+    def path(suffix: String) = s"/foreign/$arrayIndex/$suffix"
 
     val validatedMandatoryDecimalNumber = resolveNonNegativeDecimalNumber(gainAmount, s"/foreign/$arrayIndex/gainAmount")
 
@@ -148,6 +130,8 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
 
     val validatedOptionalIntegerNumber =
       resolveNonNegativeMinimumIntegerNumber(yearsHeld, s"/foreign/$arrayIndex/yearsHeld")
+
+    val validatedCustomerRef = resolveStringByPattern(foreign.customerReference, CustomerRefFormatError.withPath(path("customerReference")))
 
     combine(validatedCustomerRef, validatedMandatoryDecimalNumber, validatedOptionalDecimalNumber, validatedOptionalIntegerNumber)
 
