@@ -16,8 +16,8 @@
 
 package common.connectors
 
+import api.connectors.ConnectorSpec
 import config.{MockInsuranceAppConfig, MockInsuranceFeatureSwitches}
-import shared.connectors.ConnectorSpec
 
 trait InsuranceConnectorSpec extends ConnectorSpec with MockInsuranceFeatureSwitches {
 

@@ -16,20 +16,20 @@
 
 package config
 
+import api.config.{AppConfig, FeatureSwitches}
 import play.api.Configuration
-import shared.config.{FeatureSwitches, SharedAppConfig}
 
 import javax.inject.Inject
 
 case class InsuranceFeatureSwitches(protected val featureSwitchConfig: Configuration) extends FeatureSwitches {
 
   @Inject
-  def this(appConfig: SharedAppConfig) = this(appConfig.featureSwitchConfig)
+  def this(appConfig: AppConfig) = this(appConfig.featureSwitchConfig)
 
 }
 
 object InsuranceFeatureSwitches {
   def apply(configuration: Configuration): InsuranceFeatureSwitches = new InsuranceFeatureSwitches(configuration)
 
-  def apply()(implicit appConfig: SharedAppConfig): InsuranceFeatureSwitches = new InsuranceFeatureSwitches(appConfig)
+  def apply()(implicit appConfig: AppConfig): InsuranceFeatureSwitches = new InsuranceFeatureSwitches(appConfig)
 }

@@ -16,11 +16,11 @@
 
 package config
 
+import api.config.DownstreamConfig
+import api.models.domain.TaxYear
 import org.scalamock.handlers.CallHandler0
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
-import shared.config.DownstreamConfig
-import shared.models.domain.TaxYear
 
 trait MockInsuranceAppConfig extends TestSuite with MockFactory {
 

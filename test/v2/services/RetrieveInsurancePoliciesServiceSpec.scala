@@ -16,11 +16,11 @@
 
 package v2.services
 
-import shared.controllers.EndpointLogContext
-import shared.models.domain.{Nino, TaxYear, Timestamp}
-import shared.models.errors.*
-import shared.models.outcomes.ResponseWrapper
-import shared.services.ServiceSpec
+import api.controllers.EndpointLogContext
+import api.models.domain.{Nino, TaxYear, Timestamp}
+import api.models.errors.*
+import api.models.outcomes.ResponseWrapper
+import api.services.ServiceSpec
 import v2.connectors.MockRetrieveInsurancePoliciesConnector
 import v2.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v2.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
@@ -66,7 +66,7 @@ class RetrieveInsurancePoliciesServiceSpec extends ServiceSpec {
           ("TAX_YEAR_NOT_SUPPORTED", RuleTaxYearNotSupportedError)
         )
 
-        (errors ++ extraTysErrors).foreach(args => (serviceError).tupled(args))
+        (errors ++ extraTysErrors).foreach(args => serviceError.tupled(args))
       }
     }
   }

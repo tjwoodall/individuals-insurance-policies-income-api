@@ -16,10 +16,10 @@
 
 package v2.connectors
 
+import api.config.AppConfig
+import api.connectors.DownstreamUri.IfsUri
+import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import play.api.http.Status
-import shared.config.SharedAppConfig
-import shared.connectors.DownstreamUri.IfsUri
-import shared.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 import v2.models.request.amendInsurancePolicies.AmendInsurancePoliciesRequestData
@@ -28,14 +28,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendInsurancePoliciesConnector @Inject() (val http: HttpClientV2, val appConfig: SharedAppConfig) extends BaseDownstreamConnector {
+class AmendInsurancePoliciesConnector @Inject() (val http: HttpClientV2, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def amendInsurancePolicies(request: AmendInsurancePoliciesRequestData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
-    import shared.connectors.httpparsers.StandardDownstreamHttpParser._
+    import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 
     implicit val successCode: SuccessCode = SuccessCode(Status.CREATED)
 
@@ -43,7 +43,7 @@ class AmendInsurancePoliciesConnector @Inject() (val http: HttpClientV2, val app
     val taxYear = request.taxYear
 
     val downstreamUri = if (taxYear.useTaxYearSpecificApi) {
-      IfsUri[Unit](s"income-tax/insurance-policies/income/${taxYear.asTysDownstream}/${nino}")
+      IfsUri[Unit](s"income-tax/insurance-policies/income/${taxYear.asTysDownstream}/$nino")
     } else {
       IfsUri[Unit](s"income-tax/insurance-policies/income/$nino/${taxYear.asMtd}")
     }
