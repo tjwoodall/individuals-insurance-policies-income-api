@@ -16,10 +16,10 @@
 
 package v2.connectors
 
+import api.models.domain.{Nino, TaxYear, Timestamp}
+import api.models.outcomes.ResponseWrapper
 import common.connectors.InsuranceConnectorSpec
 import config.MockInsuranceAppConfig
-import shared.models.domain.{Nino, TaxYear, Timestamp}
-import shared.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v2.models.request.retrieveInsurancePolicies.RetrieveInsurancePoliciesRequestData
 import v2.models.response.retrieveInsurancePolicies.RetrieveInsurancePoliciesResponse
@@ -79,7 +79,7 @@ class RetrieveInsurancePoliciesConnectorSpec extends InsuranceConnectorSpec {
 
     val connector: RetrieveInsurancePoliciesConnector = new RetrieveInsurancePoliciesConnector(
       http = mockHttpClient,
-      appConfig = mockSharedAppConfig,
+      appConfig = mockAppConfig,
       insuranceConfig = mockInsuranceAppConfig
     )
 

@@ -16,12 +16,12 @@
 
 package v2.services
 
+import api.controllers.EndpointLogContext
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.*
+import api.models.outcomes.ResponseWrapper
+import api.services.ServiceSpec
 import common.errors.RuleOutsideAmendmentWindowError
-import shared.controllers.EndpointLogContext
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors.*
-import shared.models.outcomes.ResponseWrapper
-import shared.services.ServiceSpec
 import v2.connectors.MockDeleteInsurancePoliciesConnector
 import v2.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
@@ -81,7 +81,7 @@ class DeleteInsurancePoliciesServiceSpec extends ServiceSpec {
           "OUTSIDE_AMENDMENT_WINDOW" -> RuleOutsideAmendmentWindowError
         )
 
-        (errors ++ extraTysErrors).foreach(args => (serviceError).tupled(args))
+        (errors ++ extraTysErrors).foreach(args => serviceError.tupled(args))
       }
     }
   }

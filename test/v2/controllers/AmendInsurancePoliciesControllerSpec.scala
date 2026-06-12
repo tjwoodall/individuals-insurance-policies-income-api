@@ -16,16 +16,16 @@
 
 package v2.controllers
 
+import api.config.MockAppConfig
+import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.*
+import api.models.outcomes.ResponseWrapper
+import api.services.MockAuditService
 import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import shared.config.MockSharedAppConfig
-import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors.*
-import shared.models.outcomes.ResponseWrapper
-import shared.services.MockAuditService
 import v2.controllers.validators.MockAmendInsurancePoliciesValidatorFactory
 import v2.models.request.amendInsurancePolicies.*
 import v2.services.MockAmendInsurancePoliciesService
@@ -39,7 +39,7 @@ class AmendInsurancePoliciesControllerSpec
     with MockAmendInsurancePoliciesService
     with MockAuditService
     with MockAmendInsurancePoliciesValidatorFactory
-    with MockSharedAppConfig {
+    with MockAppConfig {
 
   val taxYear = "2019-20"
 
@@ -262,11 +262,11 @@ class AmendInsurancePoliciesControllerSpec
           .amendInsurancePolicies(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> false
         )
 
-        MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
         runOkTestWithAudit(
           expectedStatus = OK,
@@ -281,11 +281,11 @@ class AmendInsurancePoliciesControllerSpec
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
 
-        MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> false
         )
 
-        MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+        MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
         runErrorTestWithAudit(NinoFormatError, Some(requestBodyJson))
       }
 
@@ -296,7 +296,7 @@ class AmendInsurancePoliciesControllerSpec
           .amendInsurancePolicies(requestData)
           .returns(Future.successful(Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))))
 
-        MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
+        MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
           "supporting-agents-access-control.enabled" -> false
         )
 

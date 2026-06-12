@@ -16,9 +16,9 @@
 
 package v2.connectors
 
-import shared.connectors.ConnectorSpec
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.outcomes.ResponseWrapper
+import api.connectors.{ConnectorSpec, DownstreamOutcome}
+import api.models.domain.{Nino, TaxYear}
+import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v2.models.request.amendInsurancePolicies.*
 
@@ -93,7 +93,7 @@ class AmendInsurancePoliciesConnectorSpec extends ConnectorSpec {
 
     val connector: AmendInsurancePoliciesConnector = new AmendInsurancePoliciesConnector(
       http = mockHttpClient,
-      appConfig = mockSharedAppConfig
+      appConfig = mockAppConfig
     )
 
   }
@@ -101,13 +101,13 @@ class AmendInsurancePoliciesConnectorSpec extends ConnectorSpec {
   "AmendInsurancePoliciesConnector" when {
     "amendInsurancePolicies" must {
       "return a 201 status for a success scenario" in new IfsTest with Test {
-        val outcome = Right(ResponseWrapper(correlationId, ()))
-        val taxYear = TaxYear.fromMtd("2019-20")
+        val outcome          = Right(ResponseWrapper(correlationId, ()))
+        val taxYear: TaxYear = TaxYear.fromMtd("2019-20")
 
         willPut(url"$baseUrl/income-tax/insurance-policies/income/$nino/2019-20", amendInsurancePoliciesBody) returns Future
           .successful(outcome)
 
-        val result = await(connector.amendInsurancePolicies(request))
+        val result: DownstreamOutcome[Unit] = await(connector.amendInsurancePolicies(request))
         result shouldBe outcome
 
       }
@@ -115,13 +115,13 @@ class AmendInsurancePoliciesConnectorSpec extends ConnectorSpec {
 
     "amendInsurancePolicies called for a TYS tax year" must {
       "return a 201 status for a success scenario" in new IfsTest with Test {
-        val taxYear = TaxYear.fromMtd("2023-24")
-        val outcome = Right(ResponseWrapper(correlationId, ()))
+        val taxYear: TaxYear = TaxYear.fromMtd("2023-24")
+        val outcome          = Right(ResponseWrapper(correlationId, ()))
 
-        willPut(url"$baseUrl/income-tax/insurance-policies/income/23-24/${nino}", amendInsurancePoliciesBody) returns Future
+        willPut(url"$baseUrl/income-tax/insurance-policies/income/23-24/$nino", amendInsurancePoliciesBody) returns Future
           .successful(outcome)
 
-        val result = await(connector.amendInsurancePolicies(request))
+        val result: DownstreamOutcome[Unit] = await(connector.amendInsurancePolicies(request))
         result shouldBe outcome
       }
     }

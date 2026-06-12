@@ -16,12 +16,12 @@
 
 package v2.controllers.validators
 
+import api.controllers.validators.Validator
+import api.controllers.validators.resolvers.{ResolveNino, ResolveTaxYearMinimum}
+import api.models.errors.MtdError
 import cats.data.Validated
-import cats.implicits._
+import cats.implicits.*
 import config.InsuranceAppConfig
-import shared.controllers.validators.Validator
-import shared.controllers.validators.resolvers.{ResolveNino, ResolveTaxYearMinimum}
-import shared.models.errors.MtdError
 import v2.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
 import javax.inject.{Inject, Singleton}

@@ -16,10 +16,10 @@
 
 package v2.connectors
 
-import shared.connectors.ConnectorSpec
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors.{InternalError, NinoFormatError}
-import shared.models.outcomes.ResponseWrapper
+import api.connectors.ConnectorSpec
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.{InternalError, NinoFormatError}
+import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v2.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
@@ -35,7 +35,7 @@ class DeleteInsurancePoliciesConnectorSpec extends ConnectorSpec {
 
     protected val connector: DeleteInsurancePoliciesConnector = new DeleteInsurancePoliciesConnector(
       http = mockHttpClient,
-      appConfig = mockSharedAppConfig
+      appConfig = mockAppConfig
     )
 
     protected val request: DeleteInsurancePoliciesRequestData = DeleteInsurancePoliciesRequestData(Nino(nino), taxYear)

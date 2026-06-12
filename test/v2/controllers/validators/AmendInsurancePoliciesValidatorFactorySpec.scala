@@ -16,16 +16,16 @@
 
 package v2.controllers.validators
 
+import api.config.MockAppConfig
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.*
+import api.utils.UnitSpec
 import common.errors.{CustomerRefFormatError, EventFormatError}
 import config.MockInsuranceAppConfig
 import play.api.libs.json.{JsValue, Json}
-import shared.config.MockSharedAppConfig
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors.*
-import shared.utils.UnitSpec
 import v2.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRequestBody, AmendInsurancePoliciesRequestData}
 
-class AmendInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockSharedAppConfig with MockInsuranceAppConfig {
+class AmendInsurancePoliciesValidatorFactorySpec extends UnitSpec with MockAppConfig with MockInsuranceAppConfig {
   private implicit val correlationId: String = "1234"
 
   private val validNino    = "AA123456A"

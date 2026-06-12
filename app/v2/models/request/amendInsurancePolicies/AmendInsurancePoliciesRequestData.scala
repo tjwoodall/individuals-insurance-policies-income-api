@@ -16,6 +16,6 @@
 
 package v2.models.request.amendInsurancePolicies
 
-import shared.models.domain.{Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 
 case class AmendInsurancePoliciesRequestData(nino: Nino, taxYear: TaxYear, body: AmendInsurancePoliciesRequestBody)

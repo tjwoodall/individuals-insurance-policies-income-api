@@ -16,12 +16,12 @@
 
 package v2.controllers.validators
 
+import api.controllers.validators.RulesValidator
+import api.controllers.validators.resolvers.{ResolveInteger, ResolveParsedNumber, ResolveStringPattern}
+import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits.*
 import common.errors.{CustomerRefFormatError, EventFormatError}
-import shared.controllers.validators.RulesValidator
-import shared.controllers.validators.resolvers.{ResolveInteger, ResolveParsedNumber, ResolveStringPattern}
-import shared.models.errors.MtdError
 import v2.models.request.amendInsurancePolicies.{
   AmendCommonInsurancePoliciesItem,
   AmendForeignPoliciesItem,
@@ -40,7 +40,7 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
     ResolveStringPattern(value, regex, error)
 
   def validateBusinessRules(parsed: AmendInsurancePoliciesRequestData): Validated[Seq[MtdError], AmendInsurancePoliciesRequestData] = {
-    import parsed.body._
+    import parsed.body.*
 
     combine(
       lifeInsurance
@@ -72,7 +72,7 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
   }
 
   private def validateCommonItem(commonItem: AmendCommonInsurancePoliciesItem, itemName: String, arrayIndex: Int): Validated[Seq[MtdError], Unit] = {
-    import commonItem._
+    import commonItem.*
 
     def path(suffix: String) = s"/$itemName/$arrayIndex/$suffix"
 
@@ -96,7 +96,7 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
   }
 
   private def validateVoidedIsa(voidedIsa: AmendVoidedIsaPoliciesItem, arrayIndex: Int): Validated[Seq[MtdError], Unit] = {
-    import voidedIsa._
+    import voidedIsa.*
 
     def path(suffix: String) = s"/voidedIsa/$arrayIndex/$suffix"
 
@@ -120,7 +120,7 @@ object AmendInsurancePoliciesRulesValidator extends RulesValidator[AmendInsuranc
   }
 
   private def validateForeign(foreign: AmendForeignPoliciesItem, arrayIndex: Int): Validated[Seq[MtdError], Unit] = {
-    import foreign._
+    import foreign.*
 
     def path(suffix: String) = s"/foreign/$arrayIndex/$suffix"
 

@@ -16,6 +16,6 @@
 
 package v2.models.request.deleteInsurancePolicies
 
-import shared.models.domain.{Nino, TaxYear}
+import api.models.domain.{Nino, TaxYear}
 
 case class DeleteInsurancePoliciesRequestData(nino: Nino, taxYear: TaxYear)

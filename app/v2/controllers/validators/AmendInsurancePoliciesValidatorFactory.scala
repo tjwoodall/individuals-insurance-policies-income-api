@@ -16,13 +16,13 @@
 
 package v2.controllers.validators
 
+import api.controllers.validators.Validator
+import api.controllers.validators.resolvers.{ResolveNino, ResolveNonEmptyJsonObject, ResolveTaxYearMinimum}
+import api.models.errors.MtdError
 import cats.data.Validated
-import cats.implicits._
+import cats.implicits.*
 import config.InsuranceAppConfig
 import play.api.libs.json.JsValue
-import shared.controllers.validators.Validator
-import shared.controllers.validators.resolvers.{ResolveNino, ResolveNonEmptyJsonObject, ResolveTaxYearMinimum}
-import shared.models.errors.MtdError
 import v2.controllers.validators.AmendInsurancePoliciesRulesValidator.validateBusinessRules
 import v2.models.request.amendInsurancePolicies.{AmendInsurancePoliciesRequestBody, AmendInsurancePoliciesRequestData}
 

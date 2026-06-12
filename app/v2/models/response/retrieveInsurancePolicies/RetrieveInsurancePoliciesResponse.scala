@@ -16,10 +16,10 @@
 
 package v2.models.response.retrieveInsurancePolicies
 
+import api.models.domain.Timestamp
 import common.utils.JsonUtils
-import play.api.libs.functional.syntax._
+import play.api.libs.functional.syntax.*
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
-import shared.models.domain.Timestamp
 
 case class RetrieveInsurancePoliciesResponse(submittedOn: Timestamp,
                                              lifeInsurance: Option[Seq[CommonInsurancePoliciesItem]],

@@ -16,8 +16,8 @@
 
 package v2.models.request.amendInsurancePolicies
 
-import play.api.libs.json.{JsError, JsObject, Json}
-import shared.utils.UnitSpec
+import api.utils.UnitSpec
+import play.api.libs.json.{JsError, JsObject, JsValue, Json}
 
 class AmendInsurancePoliciesRequestBodySpec extends UnitSpec {
 
@@ -76,7 +76,7 @@ class AmendInsurancePoliciesRequestBodySpec extends UnitSpec {
     """.stripMargin
   )
 
-  val emptyArraysJson = Json.parse(
+  val emptyArraysJson: JsValue = Json.parse(
     """
       |{
       |   "lifeInsurance":[],

@@ -16,11 +16,11 @@
 
 package v2.services
 
+import api.controllers.RequestContext
+import api.models.errors.*
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits.*
 import common.errors.RuleOutsideAmendmentWindowError
-import shared.controllers.RequestContext
-import shared.models.errors.*
-import shared.services.{BaseService, ServiceOutcome}
 import v2.connectors.DeleteInsurancePoliciesConnector
 import v2.models.request.deleteInsurancePolicies.DeleteInsurancePoliciesRequestData
 
