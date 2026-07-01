@@ -1,6 +1,9 @@
-Insurance Policies Income API
+Individuals Insurance Policies Income API
 =============================
-The Insurance Policies Income API allows a developer to:
+
+[![Apache-2.0 license](http://img.shields.io/badge/license-Apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+
+The Individuals Insurance Policies Income API allows a developer to:
 
 - Create and Amend Insurance Policies Income
 - Retrieve Insurance Policies Income
@@ -8,30 +11,48 @@ The Insurance Policies Income API allows a developer to:
 
 ## Requirements
 
-- Scala 3.x.x
-- Java 11
+- Scala 3.5.x
+- Java 21
 - sbt 1.10.x
 - [Service Manager V2](https://github.com/hmrc/sm2)
 
-## Running the micro-service
+## Development setup
 
-Run from the console using: `sbt run` (starts on port 7804 by default)
+Run the microservice from the console using: `sbt run` (starts on port 7804 by default)
 
-Start the service manager profile: `sm2 --start MTDFB_INDIVIDUALS_INSURANCE_POLICIES_INCOME`
+Start the service manager profile: 
 
-## Running tests
-
+```bash
+sm2 --start MTDFB_INDIVIDUALS_INSURANCE_POLICIES_INCOME
 ```
-sbt test
-sbt it/test
-```
+
+## Run tests
+
+Run unit tests: `sbt test`
+
+Run integration tests: `sbt it/test`
 
 ## Viewing Open API Spec (OAS) docs
 
-To view documentation locally ensure the API is running, and run api-documentation-frontend:
-`./run_local_with_dependencies.sh`
-Then go to http://localhost:9680/api-documentation/docs/openapi/preview and use this port and version:
-`http://localhost:7804/api/conf/2.0/application.yaml`
+To view the OpenAPI documentation locally, ensure the API is running.
+
+Start the `api-documentation-frontend` and `api-definition` services using the Service Manager profile:
+
+```bash
+sm2 -start DEVHUB_PREVIEW_OPENAPI
+```
+
+Then navigate to the preview page:
+
+```text
+http://localhost:9680/api-documentation/docs/openapi/preview
+```
+
+Enter the specification URL using the appropriate port and API version:
+
+```text
+http://localhost:7804/api/conf/2.0/application.yaml
+```
 
 ## Changelog
 
