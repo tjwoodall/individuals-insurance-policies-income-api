@@ -23,7 +23,7 @@ Run the microservice from the console using: `sbt run` (starts on port 7804 by d
 Start the service manager profile: 
 
 ```bash
-sm2 --start MTDFB_INDIVIDUALS_INSURANCE_POLICIES_INCOME
+sm2 -start MTDFB_INDIVIDUALS_INSURANCE_POLICIES_INCOME
 ```
 
 ## Run tests
@@ -64,10 +64,8 @@ You can create a GitHub issue [here](https://github.com/hmrc/income-tax-mtd-chan
 
 ## API Reference / Documentation
 
-Available
-at [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individuals-insurance-policies-income-api)
+Available at [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individuals-insurance-policies-income-api)
 
 ## License
 
-This code is open source software licensed under
-the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
+This code is open source software licensed under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.html)
