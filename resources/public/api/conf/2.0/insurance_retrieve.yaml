@@ -38,8 +38,7 @@ responses:
         examples:
           default:
             description: Full Insurance Response
-            value:
-              $ref: './examples/retrieve_insurance_response.json'
+            externalValue: './examples/retrieve_insurance_response.json'
 
 
   "400":
